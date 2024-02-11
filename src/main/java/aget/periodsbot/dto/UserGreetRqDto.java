@@ -1,10 +1,10 @@
 package aget.periodsbot.dto;
 
-public class UserGreetDto {
+public class UserGreetRqDto {
     private final UserTIdDto userTelegramIdDto;
     private final String name;
 
-    public UserGreetDto(UserTIdDto userTelegramIdDto, String name) {
+    public UserGreetRqDto(UserTIdDto userTelegramIdDto, String name) {
         this.userTelegramIdDto = userTelegramIdDto;
         this.name = name;
     }

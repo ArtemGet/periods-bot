@@ -7,6 +7,6 @@ import java.util.UUID;
 public class EaPeriodsFactory implements PeriodsFactory {
     @Override
     public Periods periods(Handle handle, UUID usId) {
-        return new EaPeriods(handle, usId);
+        return new PgPeriods(handle, usId);
     }
 }

@@ -1,4 +1,4 @@
-package aget.periodsbot.bot.handler;
+package aget.periodsbot.domain.usecase;
 
 import aget.periodsbot.domain.Period;
 import aget.periodsbot.dto.UserTIdDto;
@@ -30,8 +30,8 @@ public class LastPeriodsStats implements FunctionUseCase<UserTIdDto, String> {
 
     @Override
     public String handle(UserTIdDto input) {
-        Periods periods = this.ds.inTransaction(ha ->
-                this.usersFactory.provide(ha)
+        Periods periods = this.ds.inTransaction(handle ->
+                this.usersFactory.provide(handle)
                         .user(input.userTelegramId())
                         .periods());
 

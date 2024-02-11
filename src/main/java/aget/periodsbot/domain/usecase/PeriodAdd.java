@@ -1,4 +1,4 @@
-package aget.periodsbot.bot.handler;
+package aget.periodsbot.domain.usecase;
 
 import aget.periodsbot.dto.PeriodAddDto;
 import aget.periodsbot.repo.UsersFactory;

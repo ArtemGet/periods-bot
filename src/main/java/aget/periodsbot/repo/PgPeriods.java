@@ -8,11 +8,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class EaPeriods implements Periods {
+public class PgPeriods implements Periods {
     private final Handle dataSource;
     private final UUID userId;
 
-    public EaPeriods(Handle dataSource, UUID userId) {
+    public PgPeriods(Handle dataSource, UUID userId) {
         this.dataSource = dataSource;
         this.userId = userId;
     }
