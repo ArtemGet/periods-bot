@@ -4,6 +4,7 @@ import aget.periodsbot.bot.command.Command;
 import aget.periodsbot.bot.command.TextCommand;
 import aget.periodsbot.bot.send.Send;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,7 +14,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class TextRoute implements Route<Message, Send> {
+public class TextRoute implements Route<Update, Send> {
     private final Map<String, Command<Message, Send>> commandMap;
 
     public TextRoute(Map<String, Command<Message, Send>> commandMap) {
@@ -30,8 +31,8 @@ public class TextRoute implements Route<Message, Send> {
     }
 
     @Override
-    public Optional<Send> route(Message message) {
-        return Optional.ofNullable(this.commandMap.get(message.getText()))
-                .map(command -> command.execute(message));
+    public Optional<Send> route(Update update) {
+        return Optional.ofNullable(this.commandMap.get(update.getMessage().getText()))
+                .map(command -> command.execute(update.getMessage()));
     }
 }

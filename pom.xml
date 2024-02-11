@@ -16,6 +16,7 @@
         <junit.version>5.9.2</junit.version>
         <mockito.version>5.10.0</mockito.version>
         <telegrambots.version>6.9.7.0</telegrambots.version>
+        <logging.version>2.22.1</logging.version>
     </properties>
 
     <dependencies>
@@ -27,6 +28,21 @@
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots</artifactId>
             <version>${telegrambots.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${logging.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${logging.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${logging.version}</version>
         </dependency>
 
         <dependency>
