@@ -38,12 +38,33 @@ public class PgPeriods implements Periods {
 
     @Override
     public Period getCurrentPeriod() {
-        return null;
+        return this.dataSource.registerRowMapper(
+                        EaPeriod.class,
+                        (rs, ctx) ->
+                                new EaPeriod(
+                                        UUID.fromString(rs.getString("id")),
+                                        rs.getDate("start_date")
+                                )
+                ).select("SELECT id,start_date FROM periods WHERE id = ? ORDER BY start_date DESC limit 1")
+                .bind("user_id", this.userId)
+                .mapTo(EaPeriod.class)
+                .first();
     }
 
     @Override
     public List<Period> lastPeriods(Long amount) {
-        return null;
+        return this.dataSource.registerRowMapper(
+                        Period.class,
+                        (rs, ctx) ->
+                                new EaPeriod(
+                                        UUID.fromString(rs.getString("id")),
+                                        rs.getDate("start_date")
+                                )
+                ).select("SELECT id,start_date FROM periods WHERE id = ? ORDER BY start_date DESC limit ?")
+                .bind("user_id", this.userId)
+                .setMaxRows(Math.toIntExact(amount))
+                .mapTo(Period.class)
+                .collectIntoList();
     }
 
     @Override
