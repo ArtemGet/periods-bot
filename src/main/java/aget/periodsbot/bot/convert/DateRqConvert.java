@@ -4,14 +4,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class DateReqConvert implements Convert<String, Date> {
+public class DateRqConvert implements Convert<String, Date> {
     private final String prefixTrim;
 
-    public DateReqConvert(String prefixTrim) {
+    public DateRqConvert(String prefixTrim) {
         this.prefixTrim = prefixTrim;
     }
 
-    public DateReqConvert() {
+    public DateRqConvert() {
         this.prefixTrim = "";
     }
 

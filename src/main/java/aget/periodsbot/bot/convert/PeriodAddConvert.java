@@ -6,10 +6,10 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.Date;
 
-public class PeriodAddReqDtoConvert implements Convert<Message, PeriodAddDto> {
+public class PeriodAddConvert implements Convert<Message, PeriodAddDto> {
     private final Convert<String, Date> dateConvert;
 
-    public PeriodAddReqDtoConvert(Convert<String, Date> dateConvert) {
+    public PeriodAddConvert(Convert<String, Date> dateConvert) {
         this.dateConvert = dateConvert;
     }
 

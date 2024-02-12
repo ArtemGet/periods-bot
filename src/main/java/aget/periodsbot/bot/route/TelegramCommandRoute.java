@@ -26,7 +26,7 @@ public class TelegramCommandRoute implements Route<Update, Send> {
     }
 
     public TelegramCommandRoute(Map<String, Command<Message, Send>> commandMap) {
-        this.route = new TextCommandRoute(Collections.unmodifiableMap(commandMap));
+        this.route = new TxtCommandRoute(Collections.unmodifiableMap(commandMap));
     }
 
     public TelegramCommandRoute(final TextCommand... textCommand) {

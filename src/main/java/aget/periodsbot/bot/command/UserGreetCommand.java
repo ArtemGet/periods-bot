@@ -10,17 +10,17 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 
 public class UserGreetCommand extends TextCommand {
     private final FunctionUseCase<UserGreetRqDto, String> userGreet;
-    private final Convert<Message, UserGreetRqDto> userGreetReqConvert;
-    private final Convert<String, String> userGreetRespConvert;
+    private final Convert<Message, UserGreetRqDto> userGreetRqConvert;
+    private final Convert<String, String> userGreetRsConvert;
 
     public UserGreetCommand(String trigger,
                             FunctionUseCase<UserGreetRqDto, String> userGreet,
-                            Convert<Message, UserGreetRqDto> userGreetReqConvert,
-                            Convert<String, String> userGreetRespConvert) {
+                            Convert<Message, UserGreetRqDto> userGreetRqConvert,
+                            Convert<String, String> userGreetRsConvert) {
         super(trigger);
         this.userGreet = userGreet;
-        this.userGreetReqConvert = userGreetReqConvert;
-        this.userGreetRespConvert = userGreetRespConvert;
+        this.userGreetRqConvert = userGreetRqConvert;
+        this.userGreetRsConvert = userGreetRsConvert;
     }
 
     @Override
@@ -28,9 +28,9 @@ public class UserGreetCommand extends TextCommand {
         return new SendText(
                 new SendMessage(
                         message.getFrom().getId().toString(),
-                        this.userGreetRespConvert.convert(
+                        this.userGreetRsConvert.convert(
                                 this.userGreet.handle(
-                                        this.userGreetReqConvert.convert(message)
+                                        this.userGreetRqConvert.convert(message)
                                 )
                         )
                 )

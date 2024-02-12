@@ -4,26 +4,24 @@ import aget.periodsbot.bot.convert.Convert;
 import aget.periodsbot.bot.send.Send;
 import aget.periodsbot.bot.send.SendText;
 import aget.periodsbot.domain.usecase.FunctionUseCase;
-import aget.periodsbot.dto.PeriodsStatsDto;
+import aget.periodsbot.dto.LastPeriodStatsDto;
 import aget.periodsbot.dto.UserTIdDto;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
-import java.util.Optional;
-
-public class LastPeriodsStatsCommand extends TextCommand {
-    private final FunctionUseCase<UserTIdDto, Optional<PeriodsStatsDto>> lastPeriodsStats;
+public class CurrPeriodCommand extends TextCommand {
+    private final FunctionUseCase<UserTIdDto, LastPeriodStatsDto> currPeriod;
     private final Convert<Message, UserTIdDto> userTIdConvert;
-    private final Convert<Optional<PeriodsStatsDto>, String> periodsStatsConvert;
+    private final Convert<LastPeriodStatsDto, String> lastPeriodStatsConvert;
 
-    public LastPeriodsStatsCommand(String trigger,
-                                   FunctionUseCase<UserTIdDto, Optional<PeriodsStatsDto>> lastPeriodsStats,
-                                   Convert<Message, UserTIdDto> userTIdConvert,
-                                   Convert<Optional<PeriodsStatsDto>, String> periodsStatsConvert) {
+    public CurrPeriodCommand(String trigger,
+                             FunctionUseCase<UserTIdDto, LastPeriodStatsDto> currPeriod,
+                             Convert<Message, UserTIdDto> userTIdConvert,
+                             Convert<LastPeriodStatsDto, String> lastPeriodStatsConvert) {
         super(trigger);
-        this.lastPeriodsStats = lastPeriodsStats;
+        this.currPeriod = currPeriod;
         this.userTIdConvert = userTIdConvert;
-        this.periodsStatsConvert = periodsStatsConvert;
+        this.lastPeriodStatsConvert = lastPeriodStatsConvert;
     }
 
     @Override
@@ -31,8 +29,8 @@ public class LastPeriodsStatsCommand extends TextCommand {
         return new SendText(
                 new SendMessage(
                         message.getFrom().getId().toString(),
-                        this.periodsStatsConvert.convert(
-                                this.lastPeriodsStats.handle(
+                        this.lastPeriodStatsConvert.convert(
+                                this.currPeriod.handle(
                                         this.userTIdConvert.convert(message)
                                 )
                         )

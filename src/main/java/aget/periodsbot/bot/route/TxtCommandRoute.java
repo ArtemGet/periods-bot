@@ -14,18 +14,18 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class TextCommandRoute implements Route<Update, Send> {
+public class TxtCommandRoute implements Route<Update, Send> {
     private final Map<String, Command<Message, Send>> commandMap;
 
-    public TextCommandRoute(Map<String, Command<Message, Send>> commandMap) {
+    public TxtCommandRoute(Map<String, Command<Message, Send>> commandMap) {
         this.commandMap = Collections.unmodifiableMap(commandMap);
     }
 
-    public TextCommandRoute(TextCommand... textCommand) {
+    public TxtCommandRoute(TextCommand... textCommand) {
         this(Arrays.asList(textCommand));
     }
 
-    public TextCommandRoute(List<TextCommand> commands) {
+    public TxtCommandRoute(List<TextCommand> commands) {
         this(commands.stream()
                 .collect(Collectors.toMap(TextCommand::trigger, Function.identity())));
     }

@@ -12,17 +12,17 @@ import java.util.Date;
 
 public class PeriodAddCommand extends TextCommand {
     private final FunctionUseCase<PeriodAddDto, Date> periodAdd;
-    private final Convert<Message, PeriodAddDto> periodAddReqConvert;
-    private final Convert<Date, String> periodAddRespConvert;
+    private final Convert<Message, PeriodAddDto> periodAddConvert;
+    private final Convert<Date, String> dateRsConvert;
 
     public PeriodAddCommand(String trigger,
                             FunctionUseCase<PeriodAddDto, Date> periodAdd,
-                            Convert<Message, PeriodAddDto> periodAddReqConvert,
-                            Convert<Date, String> periodAddRespConvert) {
+                            Convert<Message, PeriodAddDto> periodAddConvert,
+                            Convert<Date, String> dateRsConvert) {
         super(trigger);
         this.periodAdd = periodAdd;
-        this.periodAddReqConvert = periodAddReqConvert;
-        this.periodAddRespConvert = periodAddRespConvert;
+        this.periodAddConvert = periodAddConvert;
+        this.dateRsConvert = dateRsConvert;
     }
 
     @Override
@@ -30,9 +30,9 @@ public class PeriodAddCommand extends TextCommand {
         return new SendText(
                 new SendMessage(
                         message.getFrom().getId().toString(),
-                        this.periodAddRespConvert.convert(
+                        this.dateRsConvert.convert(
                                 this.periodAdd.handle(
-                                        this.periodAddReqConvert.convert(message)
+                                        this.periodAddConvert.convert(message)
                                 )
                         )
                 )
