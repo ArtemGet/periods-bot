@@ -44,7 +44,7 @@ public class PeriodsbotApplication {
                                                         new PeriodsStatsConvert(lastPeriodStatsConvert)
                                                 ),
                                                 new CurrPeriodCommand(
-                                                        "current",
+                                                        "/current",
                                                         new CurrPeriod(jdbi, usersFactory),
                                                         userTIdConvert,
                                                         lastPeriodStatsConvert
