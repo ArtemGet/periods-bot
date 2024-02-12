@@ -19,16 +19,21 @@ public class PgPeriods implements Periods {
 
     @Override
     public Period add(Date cycleStartDate) {
-        return this.dataSource
-                .registerRowMapper(EaPeriod.class,
-                        (rs, ctx) -> new EaPeriod(UUID.fromString(rs.getString("id")), cycleStartDate))
-                .inTransaction(handle ->
+        return this.dataSource.registerRowMapper(
+                EaPeriod.class,
+                (rs, ctx) ->
+                        new EaPeriod(
+                                UUID.fromString(rs.getString("id")),
+                                cycleStartDate
+                        )
+        ).inTransaction(
+                handle ->
                         handle.createUpdate("INSERT INTO periods (user_id, start_date) VALUES (?, ?)")
                                 .bind("user_id", userId)
                                 .bind("start_date", cycleStartDate)
                                 .executeAndReturnGeneratedKeys("id")
-                                .mapTo(EaPeriod.class))
-                .first();
+                                .mapTo(EaPeriod.class)
+        ).first();
     }
 
     @Override
@@ -43,11 +48,15 @@ public class PgPeriods implements Periods {
 
     @Override
     public Integer averagePeriodLength() {
-        return this.dataSource.inTransaction(handle ->
-                        handle.select("SELECT AVG(DATE_PART('day', lead(periodDate) OVER (ORDER BY start_date) - periodDate - 1)) AS average_length " +
-                                        "FROM periods WHERE user_id = ?")
+        return this.dataSource.inTransaction(
+                handle ->
+                        handle.select("""
+                                        SELECT AVG(DATE_PART('day', lead(periodDate)
+                                        OVER (ORDER BY start_date) - periodDate - 1)) AS average_length
+                                        FROM periods WHERE user_id = ?
+                                        """)
                                 .bind("user_id", this.userId)
-                                .mapTo(Integer.class))
-                .first();
+                                .mapTo(Integer.class)
+        ).first();
     }
 }

@@ -15,10 +15,13 @@ public class UserGreet implements FunctionUseCase<UserGreetRqDto, String> {
 
     @Override
     public String handle(UserGreetRqDto telegramUser) {
-        return this.dataSource.inTransaction(handle ->
+        return this.dataSource.inTransaction(
+                handle ->
                         this.usersFactory.provide(handle)
-                                .add(telegramUser.userTelegramIdDto().userTelegramId(),
-                                        telegramUser.name()))
-                .name();
+                                .add(
+                                        telegramUser.userTelegramIdDto().userTelegramId(),
+                                        telegramUser.name()
+                                )
+        ).name();
     }
 }

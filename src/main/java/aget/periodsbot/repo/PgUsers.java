@@ -17,27 +17,40 @@ public class PgUsers implements Users {
 
     @Override
     public User add(Long userTelegramId, String name) {
-        return this.dataSource.registerRowMapper(PgUser.class,
-                        (rs, ctx) -> new PgUser(this.dataSource,
+        return this.dataSource.registerRowMapper(
+                PgUser.class,
+                (rs, ctx) ->
+                        new PgUser(
+                                this.dataSource,
                                 this.periodsFactory,
-                                UUID.fromString(rs.getString("id"))))
-                .inTransaction(handle ->
+                                UUID.fromString(rs.getString("id"))
+                        )
+        ).inTransaction(
+                handle ->
                         handle.createUpdate("INSERT INTO users (t_id, name) VALUES (?, ?)")
                                 .bind("t_id", userTelegramId)
                                 .bind("name", name)
                                 .executeAndReturnGeneratedKeys("id")
-                                .mapTo(PgUser.class))
-                .first();
+                                .mapTo(PgUser.class)
+        ).first();
     }
 
     @Override
     public User user(Long userTelegramId) {
-        return this.dataSource.registerRowMapper(PgUser.class, (rs, ctx) -> new PgUser(this.dataSource,
-                        this.periodsFactory,
-                        UUID.fromString(rs.getString("id"))))
-                .inTransaction(handle ->
-                        handle.select("SELECT id,name FROM users WHERE t-id = ?", userTelegramId)
-                                .mapTo(PgUser.class))
-                .first();
+        return this.dataSource.registerRowMapper(
+                PgUser.class,
+                (rs, ctx) ->
+                        new PgUser(
+                                this.dataSource,
+                                this.periodsFactory,
+                                UUID.fromString(rs.getString("id"))
+                        )
+        ).inTransaction(
+                handle ->
+                        handle.select(
+                                "SELECT id,name FROM users WHERE t-id = ?",
+                                userTelegramId
+                        ).mapTo(PgUser.class)
+        ).first();
     }
 }

@@ -21,10 +21,13 @@ public class PgUser implements User {
 
     @Override
     public String name() {
-        return this.dataSource.inTransaction(handle ->
-                        handle.select("SELECT name FROM users WHERE id = ?", this.userId)
-                                .mapTo(String.class))
-                .first();
+        return this.dataSource.inTransaction(
+                handle ->
+                        handle.select(
+                                "SELECT name FROM users WHERE id = ?",
+                                this.userId
+                        ).mapTo(String.class)
+        ).first();
     }
 
     @Override

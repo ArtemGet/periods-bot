@@ -17,6 +17,7 @@ public class PeriodAddReqDtoConvert implements Convert<Message, PeriodAddDto> {
     public PeriodAddDto convert(Message source) {
         return new PeriodAddDto(
                 new UserTIdDto(source.getFrom().getId()),
-                this.dateConvert.convert(source.getText()));
+                this.dateConvert.convert(source.getText())
+        );
     }
 }

@@ -17,13 +17,18 @@ public class BotProps {
     }
 
     private String property(String name) {
-        try (InputStream inputStream =
-                     Files.newInputStream(Paths.get(
-                             Thread.currentThread()
-                                     .getContextClassLoader()
-                                     .getResource("")
-                                     .getPath()
-                                     + System.getenv("profile")))) {
+        try (
+                InputStream inputStream =
+                        Files.newInputStream(
+                                Paths.get(
+                                        Thread.currentThread()
+                                                .getContextClassLoader()
+                                                .getResource("")
+                                                .getPath()
+                                                + System.getenv("profile")
+                                )
+                        )
+        ) {
             Properties properties = new Properties();
             properties.load(inputStream);
 

@@ -14,25 +14,28 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class TextRoute implements Route<Update, Send> {
+public class TextCommandRoute implements Route<Update, Send> {
     private final Map<String, Command<Message, Send>> commandMap;
 
-    public TextRoute(Map<String, Command<Message, Send>> commandMap) {
+    public TextCommandRoute(Map<String, Command<Message, Send>> commandMap) {
         this.commandMap = Collections.unmodifiableMap(commandMap);
     }
 
-    public TextRoute(TextCommand... textCommand) {
+    public TextCommandRoute(TextCommand... textCommand) {
         this(Arrays.asList(textCommand));
     }
 
-    public TextRoute(List<TextCommand> commands) {
+    public TextCommandRoute(List<TextCommand> commands) {
         this(commands.stream()
                 .collect(Collectors.toMap(TextCommand::trigger, Function.identity())));
     }
 
     @Override
     public Optional<Send> route(Update update) {
-        return Optional.ofNullable(this.commandMap.get(update.getMessage().getText()))
-                .map(command -> command.execute(update.getMessage()));
+        return Optional.ofNullable(
+                this.commandMap.get(update.getMessage().getText())
+        ).map(
+                command -> command.execute(update.getMessage())
+        );
     }
 }

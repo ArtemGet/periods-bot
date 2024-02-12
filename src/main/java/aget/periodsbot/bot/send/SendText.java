@@ -14,7 +14,7 @@ public class SendText implements Send {
     @Override
     public void send(AbsSender send) {
         try {
-            send.execute(sendMessage);
+            send.execute(this.sendMessage);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }

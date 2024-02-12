@@ -10,7 +10,7 @@ public class PgUsersFactory implements UsersFactory {
     }
 
     public PgUsersFactory() {
-        this.periodsFactory = new EaPeriodsFactory();
+        this.periodsFactory = new PgPeriodsFactory();
     }
 
     @Override

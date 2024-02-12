@@ -14,26 +14,26 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class TCommandRoute implements Route<Update, Send> {
+public class TelegramCommandRoute implements Route<Update, Send> {
     private final Route<Update, Send> route;
 
-    public TCommandRoute() {
+    public TelegramCommandRoute() {
         this(Collections.emptyMap());
     }
 
-    public TCommandRoute(Route<Update, Send> route) {
+    public TelegramCommandRoute(Route<Update, Send> route) {
         this.route = route;
     }
 
-    public TCommandRoute(Map<String, Command<Message, Send>> commandMap) {
-        this.route = new TextRoute(Collections.unmodifiableMap(commandMap));
+    public TelegramCommandRoute(Map<String, Command<Message, Send>> commandMap) {
+        this.route = new TextCommandRoute(Collections.unmodifiableMap(commandMap));
     }
 
-    public TCommandRoute(final TextCommand... textCommand) {
+    public TelegramCommandRoute(final TextCommand... textCommand) {
         this(Arrays.asList(textCommand));
     }
 
-    public TCommandRoute(Collection<TextCommand> commands) {
+    public TelegramCommandRoute(Collection<TextCommand> commands) {
         this(commands.stream()
                 .collect(Collectors.toMap(TextCommand::trigger, Function.identity())));
     }

@@ -18,8 +18,9 @@ public class DateReqConvert implements Convert<String, Date> {
     @Override
     public Date convert(String source) {
         try {
-            return new SimpleDateFormat("MM-dd-yyyy")
-                    .parse(source.replace(this.prefixTrim, ""));
+            return new SimpleDateFormat("MM-dd-yyyy").parse(
+                    source.replace(this.prefixTrim, "")
+            );
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }

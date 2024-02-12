@@ -20,7 +20,8 @@ public class DeadEndRoute implements Route<Update, Send> {
 
     @Override
     public Optional<Send> route(Update update) {
-        return this.deadEndCommand
-                .map(command -> command.execute(update.getMessage()));
+        return this.deadEndCommand.map(
+                command -> command.execute(update.getMessage())
+        );
     }
 }

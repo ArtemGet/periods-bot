@@ -20,15 +20,22 @@ public class CurrPeriod implements FunctionUseCase<UserTIdDto, String> {
 
     @Override
     public String handle(UserTIdDto input) {
-        Periods periods = this.dataSource.inTransaction(handle -> this.usersFactory.provide(handle)
-                .user(input.userTelegramId())
-                .periods());
+        Periods periods = this.dataSource.inTransaction(
+                handle -> this.usersFactory.provide(handle)
+                        .user(input.userTelegramId())
+                        .periods()
+        );
         Period currPeriod = periods.getCurrentPeriod();
 
         Date currDate = new Date();
-        return String.format("Начало цикла: %s. С начала цикла прошло %s дней, До начала следующего цикла предположительно %s дней",
+        return String.format(
+                        """
+                        Начало цикла: %s. С начала цикла прошло %s дней.
+                        До начала следующего цикла предположительно %s дней
+                        """,
                 currPeriod.cycleStartDate(),
                 currPeriod.daysPassedFromCycleStart(currDate),
-                currPeriod.predictDaysBeforeCycleEnd(currDate, periods.averagePeriodLength()));
+                currPeriod.predictDaysBeforeCycleEnd(currDate, periods.averagePeriodLength())
+        );
     }
 }

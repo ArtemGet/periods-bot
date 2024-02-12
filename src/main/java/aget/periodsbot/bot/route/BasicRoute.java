@@ -27,10 +27,12 @@ public class BasicRoute implements Route<Update, Send> {
     @Override
     public Optional<Send> route(Update update) {
         return Optional.ofNullable(update)
-                .map(upd -> routes.stream()
-                        .map(route -> route.route(upd))
-                        .filter(Optional::isPresent)
-                        .findFirst())
+                .map(
+                        upd -> routes.stream()
+                                .map(route -> route.route(upd))
+                                .filter(Optional::isPresent)
+                                .findFirst()
+                )
                 .map(Optional::get)
                 .map(Optional::get);
     }

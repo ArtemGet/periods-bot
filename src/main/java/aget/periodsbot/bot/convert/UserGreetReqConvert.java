@@ -9,6 +9,7 @@ public class UserGreetReqConvert implements Convert<Message, UserGreetRqDto> {
     public UserGreetRqDto convert(Message message) {
         return new UserGreetRqDto(
                 new UserTIdDto(message.getFrom().getId()),
-                message.getFrom().getUserName());
+                message.getFrom().getUserName()
+        );
     }
 }

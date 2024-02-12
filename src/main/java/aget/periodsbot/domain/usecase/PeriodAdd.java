@@ -7,20 +7,22 @@ import org.jdbi.v3.core.Jdbi;
 import java.util.Date;
 
 public class PeriodAdd implements FunctionUseCase<PeriodAddDto, Date> {
-    private final Jdbi ds;
+    private final Jdbi dataSource;
     private final UsersFactory usersFactory;
 
-    public PeriodAdd(Jdbi ds, UsersFactory usersFactory) {
-        this.ds = ds;
+    public PeriodAdd(Jdbi dataSource, UsersFactory usersFactory) {
+        this.dataSource = dataSource;
         this.usersFactory = usersFactory;
     }
 
     @Override
     public Date handle(PeriodAddDto periodAddDto) {
-        return this.ds.inTransaction(ha -> this.usersFactory.provide(ha)
-                        .user(periodAddDto.userTelegramIdDto().userTelegramId())
-                        .periods()
-                        .add(periodAddDto.cycleStartDate()))
-                .cycleStartDate();
+        return this.dataSource.inTransaction(
+                handle ->
+                        this.usersFactory.provide(handle)
+                                .user(periodAddDto.userTelegramIdDto().userTelegramId())
+                                .periods()
+                                .add(periodAddDto.cycleStartDate())
+        ).cycleStartDate();
     }
 }

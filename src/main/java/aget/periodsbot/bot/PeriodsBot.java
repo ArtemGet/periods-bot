@@ -25,8 +25,7 @@ public class PeriodsBot extends TelegramLongPollingBot {
         this.route = route;
     }
 
-    public PeriodsBot(BotProps props,
-                      Route<Update, Send> route) throws TelegramApiException {
+    public PeriodsBot(BotProps props, Route<Update, Send> route) throws TelegramApiException {
         this.props = props;
         this.telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
         this.route = route;
@@ -34,8 +33,9 @@ public class PeriodsBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        this.route.route(update)
-                .ifPresent(send -> send.send(this));
+        this.route.route(update).ifPresent(
+                send -> send.send(this)
+        );
     }
 
     @Override
