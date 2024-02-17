@@ -26,13 +26,13 @@ public class CurrPeriod implements FunctionUseCase<UserTIdDto, LastPeriodStatsDt
                         .periods()
         );
 
-        Period currPeriod = periods.getCurrentPeriod();
+        Period currPeriod = periods.currentPeriod();
         Date currDate = new Date();
 
         return new LastPeriodStatsDto(
                 currPeriod.cycleStartDate(),
                 currPeriod.daysPassedFromCycleStart(currDate),
-                currPeriod.predictDaysBeforeCycleEnd(currDate, periods.averagePeriodLength())
+                currPeriod.predictDaysBeforeCycleEnd(currDate, periods.avgPeriodLength())
         );
     }
 }

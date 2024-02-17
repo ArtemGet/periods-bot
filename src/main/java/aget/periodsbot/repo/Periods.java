@@ -8,9 +8,9 @@ import java.util.List;
 public interface Periods {
     Period add(Date cycleStartDate);
 
-    Period getCurrentPeriod();
+    Period currentPeriod();
 
     List<Period> lastPeriods(Long amount);
 
-    Integer averagePeriodLength();
+    Integer avgPeriodLength();
 }

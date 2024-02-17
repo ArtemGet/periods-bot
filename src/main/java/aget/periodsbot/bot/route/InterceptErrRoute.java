@@ -7,18 +7,18 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Optional;
 
-public class InterceptErrorRoute implements Route<Update, Send> {
-    private static final Logger log = LoggerFactory.getLogger(InterceptErrorRoute.class);
+public class InterceptErrRoute implements Route<Update, Send> {
+    private static final Logger log = LoggerFactory.getLogger(InterceptErrRoute.class);
     private final Route<Update, Send> route;
     private final Route<Update, Send> errorRoute;
 
-    public InterceptErrorRoute(Route<Update, Send> route) {
+    public InterceptErrRoute(final Route<Update, Send> route) {
         this.route = route;
-        this.errorRoute = new DeadEndRoute();
+        this.errorRoute = new EndRoute();
     }
 
-    public InterceptErrorRoute(Route<Update, Send> route,
-                               Route<Update, Send> errorRoute) {
+    public InterceptErrRoute(final Route<Update, Send> route,
+                             final Route<Update, Send> errorRoute) {
         this.route = route;
         this.errorRoute = errorRoute;
     }

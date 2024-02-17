@@ -39,12 +39,12 @@ public class PgPeriods implements Periods {
     }
 
     @Override
-    public Period getCurrentPeriod() {
+    public Period currentPeriod() {
         return this.dataSource.registerRowMapper(
                         EaPeriod.class,
                         (rs, ctx) -> new EaPeriod(rs.getDate("start_date"))
                 ).select(
-                        "SELECT id,start_date FROM periods WHERE id = ? ORDER BY start_date DESC limit 1",
+                        "SELECT start_date FROM periods WHERE user_id = ? ORDER BY start_date DESC limit 1",
                         this.userId
                 ).mapTo(EaPeriod.class)
                 .first();
@@ -56,7 +56,7 @@ public class PgPeriods implements Periods {
                         Period.class,
                         (rs, ctx) -> new EaPeriod(rs.getDate("start_date"))
                 ).select(
-                        "SELECT id,start_date FROM public.periods WHERE id = ? ORDER BY start_date DESC limit ?",
+                        "SELECT start_date FROM public.periods WHERE user_id = ? ORDER BY start_date DESC limit ?",
                         this.userId
                 ).setMaxRows(Math.toIntExact(amount))
                 .mapTo(Period.class)
@@ -64,7 +64,7 @@ public class PgPeriods implements Periods {
     }
 
     @Override
-    public Integer averagePeriodLength() {
+    public Integer avgPeriodLength() {
         return this.dataSource.inTransaction(
                 handle ->
                         handle.select("""

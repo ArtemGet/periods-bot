@@ -26,7 +26,7 @@ class PgUsersTest {
                     );
 
     @RegisterExtension
-    JdbiExtension extension = JdbiTestcontainersExtension.instance(dbContainer);
+    static JdbiExtension extension = JdbiTestcontainersExtension.instance(dbContainer);
 
     @Test
     void add_shouldAdd_whenUserIsNotPresent(Jdbi jdbi) {

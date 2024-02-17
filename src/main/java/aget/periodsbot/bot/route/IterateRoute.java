@@ -8,32 +8,31 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
-public class BasicRoute implements Route<Update, Send> {
+public class IterateRoute implements Route<Update, Send> {
     private final Collection<Route<Update, Send>> routes;
 
-    public BasicRoute() {
+    public IterateRoute() {
         this(Collections.emptyList());
     }
 
-    public BasicRoute(Collection<Route<Update, Send>> routes) {
-        this.routes = Collections.unmodifiableCollection(routes);
+    @SafeVarargs
+    public IterateRoute(final Route<Update, Send>... route) {
+        this(Arrays.asList(route));
     }
 
-    @SafeVarargs
-    public BasicRoute(final Route<Update, Send>... route) {
-        this(Arrays.asList(route));
+    public IterateRoute(final Collection<Route<Update, Send>> routes) {
+        this.routes = Collections.unmodifiableCollection(routes);
     }
 
     @Override
     public Optional<Send> route(Update update) {
         return Optional.ofNullable(update)
-                .map(
+                .flatMap(
                         upd -> routes.stream()
                                 .map(route -> route.route(upd))
                                 .filter(Optional::isPresent)
                                 .findFirst()
-                )
-                .map(Optional::get)
-                .map(Optional::get);
+                                .orElse(Optional.empty())
+                );
     }
 }

@@ -10,16 +10,14 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.Date;
 
-public class PeriodAddCommand extends TextCommand {
+public class PeriodAddCmd implements Cmd<Message, Send> {
     private final FunctionUseCase<PeriodAddDto, Date> periodAdd;
     private final Convert<Message, PeriodAddDto> periodAddConvert;
     private final Convert<Date, String> dateRsConvert;
 
-    public PeriodAddCommand(String trigger,
-                            FunctionUseCase<PeriodAddDto, Date> periodAdd,
-                            Convert<Message, PeriodAddDto> periodAddConvert,
-                            Convert<Date, String> dateRsConvert) {
-        super(trigger);
+    public PeriodAddCmd(FunctionUseCase<PeriodAddDto, Date> periodAdd,
+                        Convert<Message, PeriodAddDto> periodAddConvert,
+                        Convert<Date, String> dateRsConvert) {
         this.periodAdd = periodAdd;
         this.periodAddConvert = periodAddConvert;
         this.dateRsConvert = dateRsConvert;

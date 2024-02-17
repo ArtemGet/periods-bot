@@ -53,7 +53,6 @@ public class PeriodsBot extends TelegramLongPollingBot {
             this.telegramBotsApi.registerBot(this);
         } catch (TelegramApiException e) {
             log.error("Error starting bot: {}", e.getMessage(), e);
-
             throw new RuntimeException(e);
         }
     }

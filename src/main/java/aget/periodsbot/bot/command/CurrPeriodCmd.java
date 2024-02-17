@@ -9,16 +9,14 @@ import aget.periodsbot.dto.UserTIdDto;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
-public class CurrPeriodCommand extends TextCommand {
+public class CurrPeriodCmd implements Cmd<Message, Send> {
     private final FunctionUseCase<UserTIdDto, LastPeriodStatsDto> currPeriod;
     private final Convert<Message, UserTIdDto> userTIdConvert;
     private final Convert<LastPeriodStatsDto, String> lastPeriodStatsConvert;
 
-    public CurrPeriodCommand(String trigger,
-                             FunctionUseCase<UserTIdDto, LastPeriodStatsDto> currPeriod,
-                             Convert<Message, UserTIdDto> userTIdConvert,
-                             Convert<LastPeriodStatsDto, String> lastPeriodStatsConvert) {
-        super(trigger);
+    public CurrPeriodCmd(FunctionUseCase<UserTIdDto, LastPeriodStatsDto> currPeriod,
+                         Convert<Message, UserTIdDto> userTIdConvert,
+                         Convert<LastPeriodStatsDto, String> lastPeriodStatsConvert) {
         this.currPeriod = currPeriod;
         this.userTIdConvert = userTIdConvert;
         this.lastPeriodStatsConvert = lastPeriodStatsConvert;

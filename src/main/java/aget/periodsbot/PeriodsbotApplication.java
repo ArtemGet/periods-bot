@@ -1,11 +1,12 @@
 package aget.periodsbot;
 
 import aget.periodsbot.bot.PeriodsBot;
-import aget.periodsbot.bot.command.CurrPeriodCommand;
-import aget.periodsbot.bot.command.ErrorCommand;
-import aget.periodsbot.bot.command.LastPeriodsStatsCommand;
-import aget.periodsbot.bot.command.PeriodAddCommand;
-import aget.periodsbot.bot.command.UserGreetCommand;
+import aget.periodsbot.bot.command.CurrPeriodCmd;
+import aget.periodsbot.bot.command.ErrorCmd;
+import aget.periodsbot.bot.command.LastPeriodsStatsCmd;
+import aget.periodsbot.bot.command.PeriodAddCmd;
+import aget.periodsbot.bot.command.UserGreetCmd;
+import aget.periodsbot.bot.command.trigger.TriggerCmd;
 import aget.periodsbot.bot.convert.DateRqConvert;
 import aget.periodsbot.bot.convert.DateRsConvert;
 import aget.periodsbot.bot.convert.LastPeriodStatsConvert;
@@ -14,11 +15,12 @@ import aget.periodsbot.bot.convert.PeriodsStatsConvert;
 import aget.periodsbot.bot.convert.UserGreetRqConvert;
 import aget.periodsbot.bot.convert.UserGreetRsConvert;
 import aget.periodsbot.bot.convert.UserTIdConvert;
-import aget.periodsbot.bot.route.BasicRoute;
-import aget.periodsbot.bot.route.DeadEndRoute;
-import aget.periodsbot.bot.route.InterceptErrorRoute;
-import aget.periodsbot.bot.route.TelegramCommandRoute;
-import aget.periodsbot.bot.route.TxtCommandRoute;
+import aget.periodsbot.bot.route.EndRoute;
+import aget.periodsbot.bot.route.InterceptErrRoute;
+import aget.periodsbot.bot.route.IterateRoute;
+import aget.periodsbot.bot.route.SecureRoute;
+import aget.periodsbot.bot.route.TgCmdRoute;
+import aget.periodsbot.bot.route.TxtCmdRoute;
 import aget.periodsbot.config.BotProps;
 import aget.periodsbot.config.PgProps;
 import aget.periodsbot.domain.usecase.CurrPeriod;
@@ -41,41 +43,61 @@ public class PeriodsbotApplication {
 
         new PeriodsBot(
                 new BotProps(),
-                new InterceptErrorRoute(
-                        new BasicRoute(
-                                new InterceptErrorRoute(
-                                        new TelegramCommandRoute(
-                                                new UserGreetCommand(
-                                                        "/start",
-                                                        new UserGreet(jdbi, usersFactory),
-                                                        new UserGreetRqConvert(userTIdConvert),
-                                                        new UserGreetRsConvert()
+                new SecureRoute(
+                        new InterceptErrRoute(
+                                new IterateRoute(
+                                        new InterceptErrRoute(
+                                                new TgCmdRoute(
+                                                        new IterateRoute(
+                                                                new InterceptErrRoute(
+                                                                        new TxtCmdRoute(
+                                                                                new TriggerCmd<>(
+                                                                                        "/start",
+                                                                                        new UserGreetCmd(
+                                                                                                new UserGreet(jdbi, usersFactory),
+                                                                                                new UserGreetRqConvert(userTIdConvert),
+                                                                                                new UserGreetRsConvert()
+                                                                                        )
+                                                                                )
+                                                                        ),
+                                                                        new EndRoute()
+                                                                ),
+                                                                new TxtCmdRoute(
+                                                                        new TriggerCmd<>(
+                                                                                "/stats",
+                                                                                new LastPeriodsStatsCmd(
+                                                                                        new LastPeriodsStats(jdbi, usersFactory),
+                                                                                        userTIdConvert,
+                                                                                        new PeriodsStatsConvert(lastPeriodStatsConvert)
+                                                                                )
+                                                                        ),
+                                                                        new TriggerCmd<>(
+                                                                                "/current",
+                                                                                new CurrPeriodCmd(
+                                                                                        new CurrPeriod(jdbi, usersFactory),
+                                                                                        userTIdConvert,
+                                                                                        lastPeriodStatsConvert
+                                                                                )
+                                                                        )
+                                                                )
+                                                        )
                                                 ),
-                                                new LastPeriodsStatsCommand(
-                                                        "/stats",
-                                                        new LastPeriodsStats(jdbi, usersFactory),
-                                                        userTIdConvert,
-                                                        new PeriodsStatsConvert(lastPeriodStatsConvert)
-                                                ),
-                                                new CurrPeriodCommand(
-                                                        "/current",
-                                                        new CurrPeriod(jdbi, usersFactory),
-                                                        userTIdConvert,
-                                                        lastPeriodStatsConvert
-                                                )
+                                                new EndRoute(new ErrorCmd())
                                         ),
-                                        new DeadEndRoute(new ErrorCommand())
-                                ),
-                                new TxtCommandRoute(
-                                        new PeriodAddCommand(
-                                                "добавить цикл",
-                                                new PeriodAdd(jdbi, usersFactory),
-                                                new PeriodAddConvert(
-                                                        new DateRqConvert("добавить цикл")
-                                                ),
-                                                new DateRsConvert()
+                                        new TxtCmdRoute(
+                                                new TriggerCmd<>(
+                                                        "добавить цикл",
+                                                        new PeriodAddCmd(
+                                                                new PeriodAdd(jdbi, usersFactory),
+                                                                new PeriodAddConvert(
+                                                                        new DateRqConvert("добавить цикл")
+                                                                ),
+                                                                new DateRsConvert()
+                                                        )
+                                                )
                                         )
-                                )
+                                ),
+                                new EndRoute()
                         )
                 )
         ).start();

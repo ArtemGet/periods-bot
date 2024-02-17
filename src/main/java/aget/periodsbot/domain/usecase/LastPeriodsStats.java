@@ -54,7 +54,7 @@ public class LastPeriodsStats implements FunctionUseCase<UserTIdDto, Optional<Pe
 
             if (periodsQ.isEmpty()) {
                 Date currDate = new Date();
-                Integer avgPeriodLength = periods.averagePeriodLength();
+                Integer avgPeriodLength = periods.avgPeriodLength();
 
                 return Optional.of(
                         new PeriodsStatsDto(

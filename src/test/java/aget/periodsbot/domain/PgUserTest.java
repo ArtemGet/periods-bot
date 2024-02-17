@@ -31,7 +31,7 @@ class PgUserTest {
                     );
 
     @RegisterExtension
-    JdbiExtension extension = JdbiTestcontainersExtension.instance(dbContainer);
+    static JdbiExtension extension = JdbiTestcontainersExtension.instance(dbContainer);
 
     @Test
     void name_shouldReturnDefault_whenUserIsNotPresent(Jdbi jdbi) {

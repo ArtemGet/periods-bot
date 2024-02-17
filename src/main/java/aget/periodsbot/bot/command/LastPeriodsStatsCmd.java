@@ -11,16 +11,14 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.Optional;
 
-public class LastPeriodsStatsCommand extends TextCommand {
+public class LastPeriodsStatsCmd implements Cmd<Message, Send> {
     private final FunctionUseCase<UserTIdDto, Optional<PeriodsStatsDto>> lastPeriodsStats;
     private final Convert<Message, UserTIdDto> userTIdConvert;
     private final Convert<Optional<PeriodsStatsDto>, String> periodsStatsConvert;
 
-    public LastPeriodsStatsCommand(String trigger,
-                                   FunctionUseCase<UserTIdDto, Optional<PeriodsStatsDto>> lastPeriodsStats,
-                                   Convert<Message, UserTIdDto> userTIdConvert,
-                                   Convert<Optional<PeriodsStatsDto>, String> periodsStatsConvert) {
-        super(trigger);
+    public LastPeriodsStatsCmd(FunctionUseCase<UserTIdDto, Optional<PeriodsStatsDto>> lastPeriodsStats,
+                               Convert<Message, UserTIdDto> userTIdConvert,
+                               Convert<Optional<PeriodsStatsDto>, String> periodsStatsConvert) {
         this.lastPeriodsStats = lastPeriodsStats;
         this.userTIdConvert = userTIdConvert;
         this.periodsStatsConvert = periodsStatsConvert;

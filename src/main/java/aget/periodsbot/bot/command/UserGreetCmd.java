@@ -8,16 +8,14 @@ import aget.periodsbot.dto.UserGreetRqDto;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
-public class UserGreetCommand extends TextCommand {
+public class UserGreetCmd implements Cmd<Message, Send> {
     private final FunctionUseCase<UserGreetRqDto, String> userGreet;
     private final Convert<Message, UserGreetRqDto> userGreetRqConvert;
     private final Convert<String, String> userGreetRsConvert;
 
-    public UserGreetCommand(String trigger,
-                            FunctionUseCase<UserGreetRqDto, String> userGreet,
-                            Convert<Message, UserGreetRqDto> userGreetRqConvert,
-                            Convert<String, String> userGreetRsConvert) {
-        super(trigger);
+    public UserGreetCmd(FunctionUseCase<UserGreetRqDto, String> userGreet,
+                        Convert<Message, UserGreetRqDto> userGreetRqConvert,
+                        Convert<String, String> userGreetRsConvert) {
         this.userGreet = userGreet;
         this.userGreetRqConvert = userGreetRqConvert;
         this.userGreetRsConvert = userGreetRsConvert;

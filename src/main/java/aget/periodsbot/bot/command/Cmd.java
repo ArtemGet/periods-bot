@@ -1,5 +1,5 @@
 package aget.periodsbot.bot.command;
 
-public interface Command<Req, Resp>{
+public interface Cmd<Req, Resp>{
     Resp execute(Req req);
 }
