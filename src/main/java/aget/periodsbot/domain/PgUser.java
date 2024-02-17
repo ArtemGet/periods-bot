@@ -20,14 +20,20 @@ public class PgUser implements User {
     }
 
     @Override
+    public UUID id() {
+        return this.userId;
+    }
+
+    @Override
     public String name() {
         return this.dataSource.inTransaction(
-                handle ->
-                        handle.select(
-                                "SELECT name FROM users WHERE id = ?",
-                                this.userId
-                        ).mapTo(String.class)
-        ).first();
+                        handle ->
+                                handle.select(
+                                        "SELECT name FROM public.users WHERE id = ?",
+                                        this.userId
+                                ).mapTo(String.class)
+                ).findFirst()
+                .orElse("пользователь");
     }
 
     @Override

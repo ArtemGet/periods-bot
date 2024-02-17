@@ -1,15 +1,12 @@
 package aget.periodsbot.domain;
 
 import java.util.Date;
-import java.util.UUID;
 
 public class EaPeriod implements Period {
-    private final UUID periodId;
     private final Date cycleStartDate;
     private static final long MILLIS_IN_DAY = 86400000L;
 
-    public EaPeriod(UUID periodId, Date cycleStartDate) {
-        this.periodId = periodId;
+    public EaPeriod(Date cycleStartDate) {
         this.cycleStartDate = cycleStartDate;
     }
 
@@ -62,6 +59,6 @@ public class EaPeriod implements Period {
             throw new RuntimeException();
         }
 
-        return (int) millisBeforeCycleEnd;
+        return (int) millisBeforeCycleEnd / (int) MILLIS_IN_DAY;
     }
 }

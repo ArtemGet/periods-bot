@@ -27,7 +27,8 @@ public class PgUsers implements Users {
                         )
         ).inTransaction(
                 handle ->
-                        handle.createUpdate("INSERT INTO users (t_id, name) VALUES (?, ?)")
+                        handle.createUpdate("INSERT INTO public.users (id, t_id, name) VALUES (:id, :t_id, :name)")
+                                .bind("id", UUID.randomUUID())
                                 .bind("t_id", userTelegramId)
                                 .bind("name", name)
                                 .executeAndReturnGeneratedKeys("id")
@@ -48,7 +49,7 @@ public class PgUsers implements Users {
         ).inTransaction(
                 handle ->
                         handle.select(
-                                "SELECT id,name FROM users WHERE t-id = ?",
+                                "SELECT id,name FROM public.users WHERE t_id = ?",
                                 userTelegramId
                         ).mapTo(PgUser.class)
         ).first();

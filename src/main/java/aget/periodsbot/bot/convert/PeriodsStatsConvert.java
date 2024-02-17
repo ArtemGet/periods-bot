@@ -34,8 +34,7 @@ public class PeriodsStatsConvert implements Convert<Optional<PeriodsStatsDto>, S
                                                 src.avgPeriodLength()
                                         )
                                 )
-                )
-                .orElse(
+                ).orElse(
                         """
                                 В вашем дневнике нет записей.
                                 Добавить цикл можно воспользовавшись командой:
