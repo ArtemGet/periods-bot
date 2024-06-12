@@ -1,24 +1,27 @@
 package aget.periodsbot.bot.route;
 
-import aget.periodsbot.bot.send.Send;
+import com.github.artemget.teleroute.command.Cmd;
+import com.github.artemget.teleroute.route.Route;
+import com.github.artemget.teleroute.route.RouteEnd;
+import com.github.artemget.teleroute.update.Wrap;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.bots.AbsSender;
 
 import java.util.Optional;
 
-public class SecureRoute implements Route<Update, Send> {
-    private final Route<Update, Send> route;
+public class SecureRoute implements Route<Update, AbsSender> {
+    private final Route<Update, AbsSender> route;
 
     public SecureRoute() {
-        this(new EndRoute());
+        this(new RouteEnd<>());
     }
 
-    public SecureRoute(final Route<Update, Send> route) {
+    public SecureRoute(final Route<Update, AbsSender> route) {
         this.route = route;
     }
 
     @Override
-    public Optional<Send> route(Update update) {
-        //TODO: add security provide
+    public Optional<Cmd<Update, AbsSender>> route(Wrap<Update> update) {
         return this.route.route(update);
     }
 }

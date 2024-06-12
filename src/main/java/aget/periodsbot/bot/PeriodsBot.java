@@ -1,51 +1,52 @@
 package aget.periodsbot.bot;
 
-import aget.periodsbot.bot.route.Route;
-import aget.periodsbot.bot.send.Send;
 import aget.periodsbot.config.BotProps;
+import com.github.artemget.teleroute.command.Cmd;
+import com.github.artemget.teleroute.command.CmdException;
+import com.github.artemget.teleroute.route.Route;
+import com.github.artemget.teleroute.send.Send;
+import com.github.artemget.teleroute.send.SendException;
+import com.github.artemget.teleroute.telegrambots.update.TgBotWrap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+
+import java.util.Optional;
 
 public class PeriodsBot extends TelegramLongPollingBot {
     private static final Logger log = LoggerFactory.getLogger(PeriodsBot.class);
     private final BotProps props;
     private final TelegramBotsApi telegramBotsApi;
-    private final Route<Update, Send> route;
+    private final Route<Update, AbsSender> route;
+
+    public PeriodsBot(BotProps props, Route<Update, AbsSender> route) throws TelegramApiException {
+        this(props, new TelegramBotsApi(DefaultBotSession.class), route);
+    }
 
     public PeriodsBot(BotProps props,
                       TelegramBotsApi telegramBotsApi,
-                      Route<Update, Send> route) {
+                      Route<Update, AbsSender> route) {
+        super(props.botToken());
         this.props = props;
         this.telegramBotsApi = telegramBotsApi;
         this.route = route;
     }
 
-    public PeriodsBot(BotProps props, Route<Update, Send> route) throws TelegramApiException {
-        this.props = props;
-        this.telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-        this.route = route;
-    }
-
     @Override
-    public void onUpdateReceived(Update update) {
-        this.route.route(update).ifPresent(
-                send -> send.send(this)
-        );
+    public void onUpdateReceived(final Update update) {
+        this.route.route(new TgBotWrap(update))
+            .flatMap(cmd -> this.handleExecution(cmd, update))
+            .ifPresent(this::handleSend);
     }
 
     @Override
     public String getBotUsername() {
         return this.props.botName();
-    }
-
-    @Override
-    public String getBotToken() {
-        return this.props.botToken();
     }
 
     public void start() {
@@ -54,6 +55,28 @@ public class PeriodsBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             log.error("Error starting bot: {}", e.getMessage(), e);
             throw new RuntimeException(e);
+        }
+    }
+
+    public Optional<Send<AbsSender>> handleExecution(
+        final Cmd<Update, AbsSender> cmd,
+        final Update update
+    ) {
+        Optional<Send<AbsSender>> resp;
+        try {
+            resp = cmd.execute(update);
+        } catch (CmdException exception) {
+            resp = Optional.empty();
+            exception.printStackTrace();
+        }
+        return resp;
+    }
+
+    public void handleSend(final Send<AbsSender> send) {
+        try {
+            send.send(this);
+        } catch (SendException exception) {
+            exception.printStackTrace();
         }
     }
 }

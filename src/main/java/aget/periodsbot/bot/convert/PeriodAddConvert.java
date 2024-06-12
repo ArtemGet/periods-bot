@@ -2,11 +2,11 @@ package aget.periodsbot.bot.convert;
 
 import aget.periodsbot.dto.PeriodAddDto;
 import aget.periodsbot.dto.UserTIdDto;
-import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Date;
 
-public class PeriodAddConvert implements Convert<Message, PeriodAddDto> {
+public class PeriodAddConvert implements Convert<Update, PeriodAddDto> {
     private final Convert<String, Date> dateConvert;
 
     public PeriodAddConvert(Convert<String, Date> dateConvert) {
@@ -14,10 +14,10 @@ public class PeriodAddConvert implements Convert<Message, PeriodAddDto> {
     }
 
     @Override
-    public PeriodAddDto convert(Message source) {
+    public PeriodAddDto convert(Update source) {
         return new PeriodAddDto(
-                new UserTIdDto(source.getFrom().getId()),
-                this.dateConvert.convert(source.getText())
+                new UserTIdDto(source.getMessage().getFrom().getId()),
+                this.dateConvert.convert(source.getMessage().getText())
         );
     }
 }
