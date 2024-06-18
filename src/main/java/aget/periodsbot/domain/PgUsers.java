@@ -1,7 +1,5 @@
-package aget.periodsbot.repo;
+package aget.periodsbot.domain;
 
-import aget.periodsbot.domain.PgUser;
-import aget.periodsbot.domain.User;
 import org.jdbi.v3.core.Handle;
 
 import java.util.UUID;

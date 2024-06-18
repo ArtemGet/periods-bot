@@ -1,7 +1,5 @@
 package aget.periodsbot.domain;
 
-import aget.periodsbot.repo.Periods;
-import aget.periodsbot.repo.PeriodsFactory;
 import org.jdbi.v3.core.Handle;
 
 import java.util.UUID;
@@ -17,11 +15,6 @@ public class PgUser implements User {
         this.dataSource = dataSource;
         this.periodsFactory = periodsFactory;
         this.userId = userId;
-    }
-
-    @Override
-    public UUID id() {
-        return this.userId;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package aget.periodsbot.repo;
 
+import aget.periodsbot.domain.PgPeriodsFactory;
+import aget.periodsbot.domain.PgUsers;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.statement.UnableToExecuteStatementException;
 import org.jdbi.v3.testing.junit5.JdbiExtension;

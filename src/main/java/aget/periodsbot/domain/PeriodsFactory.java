@@ -1,4 +1,4 @@
-package aget.periodsbot.repo;
+package aget.periodsbot.domain;
 
 import org.jdbi.v3.core.Handle;
 

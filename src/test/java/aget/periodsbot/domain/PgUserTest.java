@@ -1,8 +1,5 @@
 package aget.periodsbot.domain;
 
-import aget.periodsbot.repo.PgPeriods;
-import aget.periodsbot.repo.PgPeriodsFactory;
-import aget.periodsbot.repo.PgUsers;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.testing.junit5.JdbiExtension;
@@ -62,7 +59,7 @@ class PgUserTest {
                         handle -> new PgUser(
                                 handle,
                                 new PgPeriodsFactory(),
-                                test.id()
+                            UUID.randomUUID()
                         ).name()
                 )
         );
@@ -98,7 +95,7 @@ class PgUserTest {
                 ).add(3L, "test");
 
         Assertions.assertEquals(
-                new PgPeriods(handle, user.id()),
+                new PgPeriods(handle, UUID.randomUUID()),
                 user.periods()
         );
     }

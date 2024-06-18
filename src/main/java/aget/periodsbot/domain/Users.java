@@ -1,4 +1,4 @@
-package aget.periodsbot.repo;
+package aget.periodsbot.domain;
 
 import aget.periodsbot.domain.User;
 

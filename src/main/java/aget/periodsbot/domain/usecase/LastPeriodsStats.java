@@ -1,12 +1,12 @@
 package aget.periodsbot.domain.usecase;
 
 import aget.periodsbot.domain.Period;
+import aget.periodsbot.domain.Periods;
 import aget.periodsbot.dto.LastPeriodStatsDto;
 import aget.periodsbot.dto.PeriodStatsDto;
 import aget.periodsbot.dto.PeriodsStatsDto;
 import aget.periodsbot.dto.UserTIdDto;
-import aget.periodsbot.repo.Periods;
-import aget.periodsbot.repo.UsersFactory;
+import aget.periodsbot.domain.UsersFactory;
 import org.jdbi.v3.core.Jdbi;
 
 import java.util.ArrayDeque;
@@ -19,12 +19,12 @@ import java.util.Queue;
 public class LastPeriodsStats implements FunctionUseCase<UserTIdDto, Optional<PeriodsStatsDto>> {
     private final Jdbi dataSource;
     private final UsersFactory usersFactory;
-    private final Long periodsAmount;
-    private static final Long DEFAULT_PERIOD_AMOUNT = 10L;
+    private final Integer periodsAmount;
+    private static final Integer DEFAULT_PERIOD_AMOUNT = 10;
 
     public LastPeriodsStats(Jdbi dataSource,
                             UsersFactory usersFactory,
-                            Long periodsAmount) {
+                            Integer periodsAmount) {
         this.dataSource = dataSource;
         this.usersFactory = usersFactory;
         this.periodsAmount = periodsAmount;
@@ -39,14 +39,14 @@ public class LastPeriodsStats implements FunctionUseCase<UserTIdDto, Optional<Pe
 
     @Override
     public Optional<PeriodsStatsDto> handle(UserTIdDto input) {
-        Periods periods = this.dataSource.inTransaction(
+        Periods.SmartPeriods periods = new Periods.SmartPeriods( this.dataSource.inTransaction(
                 handle ->
                         this.usersFactory.provide(handle)
                                 .user(input.userTelegramId())
                                 .periods()
-        );
+        ));
 
-        Queue<Period> periodsQ = new ArrayDeque<>(periods.lastPeriods(this.periodsAmount));
+        Queue<Period> periodsQ = new ArrayDeque<>(periods.last(this.periodsAmount));
         Collection<PeriodStatsDto> periodStatsDtos = new ArrayList<>();
 
         while (!periodsQ.isEmpty()) {
@@ -54,23 +54,22 @@ public class LastPeriodsStats implements FunctionUseCase<UserTIdDto, Optional<Pe
 
             if (periodsQ.isEmpty()) {
                 Date currDate = new Date();
-                Integer avgPeriodLength = periods.avgPeriodLength();
+                Integer avgPeriodLength = periods.avgLength(DEFAULT_PERIOD_AMOUNT);
 
                 return Optional.of(
                         new PeriodsStatsDto(
                                 periodStatsDtos,
                                 new LastPeriodStatsDto(
-                                        period.cycleStartDate(),
-                                        period.daysPassedFromCycleStart(currDate),
-                                        period.predictDaysBeforeCycleEnd(currDate, avgPeriodLength)
+                                        period.start(),
+                                        period.days().intValue(),
+                                        period.days().intValue()
                                 ),
                                 avgPeriodLength)
                 );
             } else {
                 periodStatsDtos.add(
                         new PeriodStatsDto(
-                                period.cycleStartDate(),
-                                period.cycleEndDate(periodsQ.peek())
+                                period.start()
                         )
                 );
             }
