@@ -1,8 +1,8 @@
 package aget.periodsbot.domain;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public interface Period {
-    Date start();
+    LocalDate start();
     Integer days();
 }

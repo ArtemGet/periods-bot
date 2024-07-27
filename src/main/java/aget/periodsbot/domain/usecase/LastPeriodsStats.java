@@ -61,8 +61,8 @@ public class LastPeriodsStats implements FunctionUseCase<UserTIdDto, Optional<Pe
                                 periodStatsDtos,
                                 new LastPeriodStatsDto(
                                         period.start(),
-                                        period.days().intValue(),
-                                        period.days().intValue()
+                                        period.days(),
+                                        period.days()
                                 ),
                                 avgPeriodLength)
                 );

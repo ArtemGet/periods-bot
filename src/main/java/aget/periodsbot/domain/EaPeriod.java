@@ -1,37 +1,36 @@
 package aget.periodsbot.domain;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class EaPeriod implements Period {
-    private final Date start;
-    private final Date end;
+    private final LocalDate start;
+    private final LocalDate end;
 
-    public EaPeriod(Date start) {
-        this(start, new Date());
+    public EaPeriod(LocalDate start) {
+        this(start, LocalDate.now());
     }
 
-    public EaPeriod(Date start, Period next) {
+    public EaPeriod(LocalDate start, Period next) {
         this(start, next.start());
     }
 
-    public EaPeriod(Date start, Date end) {
+    public EaPeriod(LocalDate start, LocalDate end) {
         this.start = start;
         this.end = end;
     }
 
     @Override
-    public Date start() {
+    public LocalDate start() {
         return start;
     }
 
     @Override
     public Integer days() {
-        return Long.valueOf(
-            TimeUnit.DAYS.convert(
-                Math.abs(end.getTime() - start.getTime()),
-                TimeUnit.MILLISECONDS
-            )
-        ).intValue();
+        return Long
+            .valueOf(Math.abs(ChronoUnit.DAYS.between(start,end)))
+            .intValue();
     }
 }

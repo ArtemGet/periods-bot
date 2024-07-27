@@ -3,16 +3,12 @@ package aget.periodsbot.domain;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 class EaPeriodTest {
-    private static final long MILLIS_IN_DAY = 86400000L;
-    private static final long DAYS_IN_CYCLE = 30;
-
     @Test
-    void cycleStartDate_shouldReturn_whenDateIsPresent() {
-        Date current = new Date();
-
+    void start_whenDateIsPresent_returnsDate() {
+        LocalDate current = LocalDate.now();
         Assertions.assertEquals(
                 current,
                 new EaPeriod(current).start()
@@ -20,16 +16,12 @@ class EaPeriodTest {
     }
 
     @Test
-    void cycleEndDate_shouldReturn_whenNextPeriodInFuture() {
-        Date current = new Date();
-        Date previous = new Date(current.getTime() - DAYS_IN_CYCLE * MILLIS_IN_DAY);
-
-        EaPeriod currentPeriod = new EaPeriod(current);
-        EaPeriod previousPeriod = new EaPeriod(previous, current);
-
+    void days_whenDateIsPresent_returnsDuration() {
         Assertions.assertEquals(
-                new Date(current.getTime() - MILLIS_IN_DAY),
-                previousPeriod.days()
+            new EaPeriod(
+                LocalDate.now().minusDays(30)
+            ).days(),
+            30
         );
     }
 }

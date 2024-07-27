@@ -33,7 +33,10 @@ public class PgPeriods implements Periods {
     public List<Period> last(Integer amount) {
         return this.dataSource.registerRowMapper(
                 Period.class,
-                (rs, ctx) -> new EaPeriod(rs.getDate("start_date"), rs.getDate("end_date"))
+                (rs, ctx) -> new EaPeriod(
+                    rs.getDate("start_date").toLocalDate(),
+                    rs.getDate("end_date").toLocalDate()
+                )
             ).select(
                 """
                     SELECT start_date, end_date

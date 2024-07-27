@@ -20,9 +20,9 @@ public class PeriodsStatsConvert implements Convert<Optional<PeriodsStatsDto>, S
                         src.periodsStats().stream()
                                 .map(periodStats ->
                                         String.format(
-                                                "Начало цикла: %s, конец цикла: %s",
-                                                periodStats.cycleStart(),
-                                                periodStats.cycleEnd()
+                                                "Начало цикла: %s, продолжительность ",
+                                                periodStats.cycleStart()
+//                                                periodStats.cycleEnd()
                                         )
                                 )
                                 .collect(Collectors.joining("\n"))

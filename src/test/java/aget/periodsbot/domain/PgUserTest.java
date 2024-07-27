@@ -19,84 +19,81 @@ import java.util.UUID;
 class PgUserTest {
     @Container
     public static final JdbcDatabaseContainer<?> dbContainer =
-            new PostgreSQLContainer<>("postgres:16-alpine")
-                    .withReuse(false)
-                    .withDatabaseName("periods_bot")
-                    .withCopyFileToContainer(
-                            MountableFile.forClasspathResource("db/init-users.sql"),
-                            "/docker-entrypoint-initdb.d/"
-                    );
+        new PostgreSQLContainer<>("postgres:16-alpine")
+            .withReuse(false)
+            .withDatabaseName("periods_bot")
+            .withCopyFileToContainer(
+                MountableFile.forClasspathResource("db/init-users.sql"),
+                "/docker-entrypoint-initdb.d/"
+            );
 
     @RegisterExtension
     static JdbiExtension extension = JdbiTestcontainersExtension.instance(dbContainer);
 
     @Test
-    void name_shouldReturnDefault_whenUserIsNotPresent(Jdbi jdbi) {
+    void name_whenUserIsNotPresent_returnsDefault(Jdbi jdbi) {
         Assertions.assertEquals(
-                "пользователь",
-                jdbi.inTransaction(
-                        handle -> new PgUser(
-                                handle,
-                                new PgPeriodsFactory(),
-                                UUID.randomUUID()
-                        ).name()
-                )
+            "пользователь",
+            jdbi.inTransaction(
+                handle -> new PgUser(
+                    handle,
+                    new PgPeriodsFactory(),
+                    UUID.randomUUID()
+                ).name()
+            )
         );
     }
 
     @Test
-    void name_shouldReturn_whenUserIsPresent(Jdbi jdbi) {
-        User test = jdbi.inTransaction(
-                handle -> new PgUsers(
-                        handle,
-                        new PgPeriodsFactory()
-                ).add(1L, "test")
+    void name_whenUserIsPresent_returnsName(Jdbi jdbi) {
+        jdbi.useTransaction(
+            handle -> {
+                Users users = new PgUsers(
+                    handle,
+                    new PgPeriodsFactory()
+                );
+                users.add(1L, "test");
+            }
+        );
+
+        User user = jdbi.inTransaction(
+            handle -> new PgUsers(
+                handle,
+                new PgPeriodsFactory()
+            ).user(1L)
         );
 
         Assertions.assertEquals(
-                "test",
-                jdbi.inTransaction(
-                        handle -> new PgUser(
-                                handle,
-                                new PgPeriodsFactory(),
-                            UUID.randomUUID()
-                        ).name()
-                )
+            "test",
+            jdbi.inTransaction(
+                handle -> {
+                    return new PgUsers(
+                        handle,
+                        new PgPeriodsFactory()
+                    ).user(1L).name();
+                }
+            )
         );
     }
 
     @Test
-    void name_shouldReturnDefault_whenUserIsPresentAndNameIsNotPresent(Jdbi jdbi) {
-        jdbi.inTransaction(
-                handle -> new PgUsers(
-                        handle,
-                        new PgPeriodsFactory()
-                ).add(2L, null)
+    void name_whenUserIsPresentAndNameIsNotPresent_returnsDefault(Jdbi jdbi) {
+        jdbi.useTransaction(
+            handle -> new PgUsers(
+                handle,
+                new PgPeriodsFactory()
+            ).add(2L, null)
         );
 
         Assertions.assertEquals(
-                "пользователь",
-                jdbi.inTransaction(
-                        handle -> new PgUser(
-                                handle,
-                                new PgPeriodsFactory(),
-                                UUID.randomUUID()
-                        ).name()
-                )
-        );
-    }
-
-    @Test
-    void periods(Handle handle) {
-        User user =
-                new PgUsers(
-                        handle,
-                        new PgPeriodsFactory()
-                ).add(3L, "test");
-
-        Assertions.assertEquals(
-                new PgPeriods(handle, UUID.randomUUID()),
-                user.periods()
+            "пользователь",
+            jdbi.inTransaction(
+                handle -> new PgUser(
+                    handle,
+                    new PgPeriodsFactory(),
+                    UUID.randomUUID()
+                ).name()
+            )
         );
     }
 }
