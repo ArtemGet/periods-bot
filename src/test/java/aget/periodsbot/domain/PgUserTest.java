@@ -1,6 +1,5 @@
 package aget.periodsbot.domain;
 
-import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.testing.junit5.JdbiExtension;
 import org.jdbi.v3.testing.junit5.tc.JdbiTestcontainersExtension;
@@ -23,7 +22,7 @@ class PgUserTest {
             .withReuse(false)
             .withDatabaseName("periods_bot")
             .withCopyFileToContainer(
-                MountableFile.forClasspathResource("db/init-users.sql"),
+                MountableFile.forClasspathResource("db/init.sql"),
                 "/docker-entrypoint-initdb.d/"
             );
 
@@ -31,7 +30,7 @@ class PgUserTest {
     static JdbiExtension extension = JdbiTestcontainersExtension.instance(dbContainer);
 
     @Test
-    void name_whenUserIsNotPresent_returnsDefault(Jdbi jdbi) {
+    void name_userIsNotPresent_returnsDefault(Jdbi jdbi) {
         Assertions.assertEquals(
             "пользователь",
             jdbi.inTransaction(
@@ -45,7 +44,7 @@ class PgUserTest {
     }
 
     @Test
-    void name_whenUserIsPresent_returnsName(Jdbi jdbi) {
+    void name_userIsPresent_returnsName(Jdbi jdbi) {
         jdbi.useTransaction(
             handle -> {
                 Users users = new PgUsers(
@@ -56,28 +55,19 @@ class PgUserTest {
             }
         );
 
-        User user = jdbi.inTransaction(
-            handle -> new PgUsers(
-                handle,
-                new PgPeriodsFactory()
-            ).user(1L)
-        );
-
         Assertions.assertEquals(
             "test",
             jdbi.inTransaction(
-                handle -> {
-                    return new PgUsers(
-                        handle,
-                        new PgPeriodsFactory()
-                    ).user(1L).name();
-                }
+                handle -> new PgUsers(
+                    handle,
+                    new PgPeriodsFactory()
+                ).user(1L).name()
             )
         );
     }
 
     @Test
-    void name_whenUserIsPresentAndNameIsNotPresent_returnsDefault(Jdbi jdbi) {
+    void name_userIsPresentAndNameIsNotPresent_returnsDefault(Jdbi jdbi) {
         jdbi.useTransaction(
             handle -> new PgUsers(
                 handle,

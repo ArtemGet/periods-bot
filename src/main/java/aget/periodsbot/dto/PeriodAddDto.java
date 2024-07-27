@@ -1,12 +1,12 @@
 package aget.periodsbot.dto;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class PeriodAddDto {
     private final UserTIdDto userTIdDto;
-    private final Date cycleStartDate;
+    private final LocalDate cycleStartDate;
 
-    public PeriodAddDto(UserTIdDto userTIdDto, Date cycleStartDate) {
+    public PeriodAddDto(UserTIdDto userTIdDto, LocalDate cycleStartDate) {
         this.userTIdDto = userTIdDto;
         this.cycleStartDate = cycleStartDate;
     }
@@ -15,7 +15,7 @@ public class PeriodAddDto {
         return this.userTIdDto;
     }
 
-    public Date cycleStartDate() {
+    public LocalDate cycleStartDate() {
         return this.cycleStartDate;
     }
 }

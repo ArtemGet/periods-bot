@@ -1,10 +1,10 @@
 package aget.periodsbot.bot.convert;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
-public class DateRqConvert implements Convert<String, Date> {
+public class DateRqConvert implements Convert<String, LocalDate> {
     private final String prefixTrim;
 
     public DateRqConvert(String prefixTrim) {
@@ -16,12 +16,10 @@ public class DateRqConvert implements Convert<String, Date> {
     }
 
     @Override
-    public Date convert(String source) {
+    public LocalDate convert(String source) {
         try {
-            return new SimpleDateFormat("MM-dd-yyyy").parse(
-                    source.replace(this.prefixTrim, "")
-            );
-        } catch (ParseException e) {
+            return LocalDate.parse(source, DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+        } catch (DateTimeParseException e) {
             throw new RuntimeException(e);
         }
     }

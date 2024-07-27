@@ -1,16 +1,15 @@
 package aget.periodsbot.dto;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 public class PeriodStatsDto {
-    private final LocalDate cycleStart;
+    private final Date cycleStart;
 
-    public PeriodStatsDto(LocalDate cycleStart) {
+    public PeriodStatsDto(Date cycleStart) {
         this.cycleStart = cycleStart;
     }
 
-    public LocalDate cycleStart() {
+    public Date cycleStart() {
         return cycleStart;
     }
 

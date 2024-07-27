@@ -1,14 +1,13 @@
 package aget.periodsbot.dto;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 public class LastPeriodStatsDto {
-    private final LocalDate cycleStart;
+    private final Date cycleStart;
     private final Integer daysPassedFromCycleStart;
     private final Integer predictedDaysBeforeCycleEnd;
 
-    public LastPeriodStatsDto(LocalDate cycleStart,
+    public LastPeriodStatsDto(Date cycleStart,
                               Integer daysPassedFromCycleStart,
                               Integer predictedDaysBeforeCycleEnd) {
         this.cycleStart = cycleStart;
@@ -16,7 +15,7 @@ public class LastPeriodStatsDto {
         this.predictedDaysBeforeCycleEnd = predictedDaysBeforeCycleEnd;
     }
 
-    public LocalDate cycleStart() {
+    public Date cycleStart() {
         return cycleStart;
     }
 

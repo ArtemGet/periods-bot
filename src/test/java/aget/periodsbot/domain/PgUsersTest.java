@@ -21,7 +21,7 @@ class PgUsersTest {
             .withReuse(false)
             .withDatabaseName("periods_bot")
             .withCopyFileToContainer(
-                MountableFile.forClasspathResource("db/init-users.sql"),
+                MountableFile.forClasspathResource("db/init.sql"),
                 "/docker-entrypoint-initdb.d/"
             );
 
@@ -29,7 +29,7 @@ class PgUsersTest {
     static JdbiExtension extension = JdbiTestcontainersExtension.instance(dbContainer);
 
     @Test
-    void add_shouldAdd_whenUserIsNotPresent(Jdbi jdbi) {
+    void add_userIsNotPresent_addsNew(Jdbi jdbi) {
         Assertions.assertDoesNotThrow(
             () -> jdbi.useTransaction(
                 handle ->
@@ -42,7 +42,7 @@ class PgUsersTest {
     }
 
     @Test
-    void add_shouldThrow_whenUserIsPresent(Jdbi jdbi) {
+    void add_userIsPresent_throws(Jdbi jdbi) {
         Assertions.assertDoesNotThrow(
             () -> jdbi.useTransaction(
                 handle ->
@@ -66,7 +66,7 @@ class PgUsersTest {
     }
 
     @Test
-    void user_shouldNotThrow_whenUserIsPresent(Jdbi jdbi) {
+    void user_userIsPresent_returnsUser(Jdbi jdbi) {
         jdbi.useTransaction(
             handle ->
                 new PgUsers(
@@ -87,7 +87,7 @@ class PgUsersTest {
     }
 
     @Test
-    void user_shouldThrow_whenUserIsNotPresent(Jdbi jdbi) {
+    void user_userIsNotPresent_throws(Jdbi jdbi) {
         Assertions.assertThrows(
             IllegalStateException.class,
             () -> jdbi.inTransaction(

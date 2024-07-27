@@ -1,10 +1,10 @@
 package aget.periodsbot.bot.convert;
 
-import java.util.Date;
+import java.time.LocalDate;
 
-public class DateRsConvert implements Convert<Date, String> {
+public class DateRsConvert implements Convert<LocalDate, String> {
     @Override
-    public String convert(Date source) {
+    public String convert(LocalDate source) {
         return String.format("Добавлено начало цикла: %s", source);
     }
 }

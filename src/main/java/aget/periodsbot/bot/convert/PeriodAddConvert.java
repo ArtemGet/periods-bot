@@ -4,12 +4,12 @@ import aget.periodsbot.dto.PeriodAddDto;
 import aget.periodsbot.dto.UserTIdDto;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class PeriodAddConvert implements Convert<Update, PeriodAddDto> {
-    private final Convert<String, Date> dateConvert;
+    private final Convert<String, LocalDate> dateConvert;
 
-    public PeriodAddConvert(Convert<String, Date> dateConvert) {
+    public PeriodAddConvert(Convert<String, LocalDate> dateConvert) {
         this.dateConvert = dateConvert;
     }
 

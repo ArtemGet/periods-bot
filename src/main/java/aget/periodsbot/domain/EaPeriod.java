@@ -2,8 +2,6 @@ package aget.periodsbot.domain;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 public class EaPeriod implements Period {
     private final LocalDate start;

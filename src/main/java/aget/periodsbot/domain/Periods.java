@@ -1,14 +1,14 @@
 package aget.periodsbot.domain;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface Periods {
-    void add(Date start);
+    void add(LocalDate start);
 
     List<Period> last(Integer amount);
 
-    void remove(Date start);
+    void remove(LocalDate start);
 
     class SmartPeriods implements Periods {
         private final Periods periods;
@@ -18,7 +18,7 @@ public interface Periods {
         }
 
         @Override
-        public void add(Date start) {
+        public void add(LocalDate start) {
             periods.add(start);
         }
 
@@ -28,7 +28,7 @@ public interface Periods {
         }
 
         @Override
-        public void remove(Date start) {
+        public void remove(LocalDate start) {
             periods.remove(start);
         }
 

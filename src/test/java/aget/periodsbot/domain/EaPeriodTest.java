@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 class EaPeriodTest {
     @Test
-    void start_whenDateIsPresent_returnsDate() {
+    void start_dateIsPresent_returnsDate() {
         LocalDate current = LocalDate.now();
         Assertions.assertEquals(
                 current,
@@ -16,7 +16,7 @@ class EaPeriodTest {
     }
 
     @Test
-    void days_whenDateIsPresent_returnsDuration() {
+    void days_dateIsPresent_returnsDuration() {
         Assertions.assertEquals(
             new EaPeriod(
                 LocalDate.now().minusDays(30)

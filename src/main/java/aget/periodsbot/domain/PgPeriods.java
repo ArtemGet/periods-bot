@@ -2,7 +2,7 @@ package aget.periodsbot.domain;
 
 import org.jdbi.v3.core.Handle;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,16 +16,18 @@ public class PgPeriods implements Periods {
     }
 
     @Override
-    public void add(Date start) {
+    public void add(LocalDate start) {
         this.dataSource
-            .inTransaction(
+            .useTransaction(
                 handle ->
                     handle.createUpdate("""
-                            INSERT INTO public.periods (user_id, start_date)
-                             VALUES (:user_id, :start_date)
+                            INSERT INTO public.periods (id, user_id, start_date)
+                            VALUES (:id, :user_id, :start_date)
                             """)
+                        .bind("id", UUID.randomUUID())
                         .bind("user_id", this.userId)
                         .bind("start_date", start)
+                        .execute()
             );
     }
 
@@ -35,35 +37,34 @@ public class PgPeriods implements Periods {
                 Period.class,
                 (rs, ctx) -> new EaPeriod(
                     rs.getDate("start_date").toLocalDate(),
-                    rs.getDate("end_date").toLocalDate()
-                )
+                    rs.getDate("end_date").toLocalDate())
             ).select(
                 """
-                    SELECT start_date, end_date
+                    SELECT start_date
+                    , CASE WHEN end_date IS NULL THEN now() ELSE end_date END
                     FROM (
                         SELECT start_date,
                         lag(start_date) OVER(
                             ORDER BY start_date DESC,
-                            start_date rows between current row and unbounded following 
+                            start_date rows between current row and unbounded following
                         ) as end_date
                         FROM public.periods
                         WHERE user_id = ?
-                        limit ?
+                        LIMIT ?
                     ) x""",
-                this.userId
-            ).setMaxRows(amount)
-            .mapTo(Period.class)
+                this.userId, amount
+            ).mapTo(Period.class)
             .collectIntoList();
     }
 
     @Override
-    public void remove(Date start) {
-        this.dataSource.inTransaction(
+    public void remove(LocalDate start) {
+        this.dataSource.useTransaction(
             handle ->
                 handle.execute("""
-                    DELETE FROM public.periods
-                    WHERE user_id = ?
-                    AND  start_date = ?""",
+                        DELETE FROM public.periods
+                        WHERE user_id = ?
+                        AND  start_date = ?""",
                     this.userId, start
                 )
         );
