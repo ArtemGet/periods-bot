@@ -27,8 +27,6 @@ public class SmartPeriodsTest {
 
     @Test
     void avgLength_periodsIsPresent_returnsLength() {
-        LocalDate current = LocalDate.now();
-
         Assertions.assertEquals(
             new Periods.SmartPeriods(
                 new FkPeriods(

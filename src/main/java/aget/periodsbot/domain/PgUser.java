@@ -1,5 +1,6 @@
 package aget.periodsbot.domain;
 
+import aget.periodsbot.context.PeriodsFactory;
 import org.jdbi.v3.core.Handle;
 
 import java.util.UUID;
@@ -20,13 +21,13 @@ public class PgUser implements User {
     @Override
     public String name() {
         return this.dataSource.inTransaction(
-                        handle ->
-                                handle.select(
-                                        "SELECT name FROM public.users WHERE id = ?",
-                                        this.userId
-                                ).mapTo(String.class)
-                ).findFirst()
-                .orElse("пользователь");
+                handle ->
+                    handle.select(
+                        "SELECT name FROM public.users WHERE id = ?",
+                        this.userId
+                    ).mapTo(String.class)
+            ).findFirst()
+            .orElse("пользователь");
     }
 
     @Override

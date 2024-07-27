@@ -1,5 +1,7 @@
 package aget.periodsbot.domain;
 
+import aget.periodsbot.context.PgUsersContext;
+import aget.periodsbot.context.UsersContext;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.statement.UnableToExecuteStatementException;
 import org.jdbi.v3.testing.junit5.JdbiExtension;
@@ -33,22 +35,11 @@ public class PgPeriodsTest {
 
     @Test
     void add_userIsPresent_addsNew(Jdbi jdbi) {
-        jdbi.useTransaction(
-            handle ->
-                new PgUsers(
-                    handle,
-                    new PgPeriodsFactory()
-                ).add(1L, "test")
-        );
-
+        UsersContext context = new PgUsersContext(jdbi);
+        context.consume(users -> users.add(1L, "test"));
 
         Assertions.assertDoesNotThrow(() ->
-            jdbi.useTransaction(
-                handle -> new PgUsers(
-                    handle,
-                    new PgPeriodsFactory()
-                ).user(1L).periods().add(LocalDate.now())
-            )
+            context.callback(users -> users.user(1L))
         );
     }
 
@@ -67,59 +58,36 @@ public class PgPeriodsTest {
 
     @Test
     void last_periodIsPresent_returnsLast(Jdbi jdbi) {
-        jdbi.useTransaction(
-            handle ->
-                new PgUsers(
-                    handle,
-                    new PgPeriodsFactory()
-                ).add(2L, "test")
-        );
+        UsersContext context = new PgUsersContext(jdbi);
+        context.consume(users -> users.add(2L, "test"));
 
         LocalDate current = LocalDate.now();
 
-        jdbi.useTransaction(
-            handle -> new PgUsers(
-                handle,
-                new PgPeriodsFactory()
-            ).user(2L).periods().add(current)
-        );
+        context.consume(users -> users.user(2L).periods().add(current));
 
         Assertions.assertEquals(
             current,
-            jdbi.inTransaction(
-                handle -> new PgUsers(
-                    handle,
-                    new PgPeriodsFactory()
-                ).user(2L).periods().last(10)
+            context.callback(users ->
+                users.user(2L)
+                    .periods()
+                    .last(10)
             ).get(0).start()
         );
     }
 
     @Test
     void remove_periodIsPresent_removes(Jdbi jdbi) {
-        jdbi.useTransaction(
-            handle ->
-                new PgUsers(
-                    handle,
-                    new PgPeriodsFactory()
-                ).add(3L, "test")
-        );
+        UsersContext context = new PgUsersContext(jdbi);
+        context.consume(users -> users.add(3L, "test"));
 
         LocalDate current = LocalDate.now();
 
-        jdbi.useTransaction(
-            handle -> new PgUsers(
-                handle,
-                new PgPeriodsFactory()
-            ).user(3L).periods().add(current)
-        );
+        context.consume(users -> users.user(3L).periods().add(current));
 
         Assertions.assertDoesNotThrow(
-            () -> jdbi.useTransaction(
-                handle -> new PgUsers(
-                    handle,
-                    new PgPeriodsFactory()
-                ).user(3L).periods().remove(current))
+            () -> context.consume(
+                users -> users.user(3L).periods().remove(current)
+            )
         );
     }
 }

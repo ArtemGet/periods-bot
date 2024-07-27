@@ -10,8 +10,8 @@ class EaPeriodTest {
     void start_dateIsPresent_returnsDate() {
         LocalDate current = LocalDate.now();
         Assertions.assertEquals(
-                current,
-                new EaPeriod(current).start()
+            current,
+            new EaPeriod(current).start()
         );
     }
 

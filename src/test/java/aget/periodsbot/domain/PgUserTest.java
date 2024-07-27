@@ -1,5 +1,8 @@
 package aget.periodsbot.domain;
 
+import aget.periodsbot.context.PgPeriodsFactory;
+import aget.periodsbot.context.PgUsersContext;
+import aget.periodsbot.context.UsersContext;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.testing.junit5.JdbiExtension;
 import org.jdbi.v3.testing.junit5.tc.JdbiTestcontainersExtension;
@@ -45,45 +48,24 @@ class PgUserTest {
 
     @Test
     void name_userIsPresent_returnsName(Jdbi jdbi) {
-        jdbi.useTransaction(
-            handle -> {
-                Users users = new PgUsers(
-                    handle,
-                    new PgPeriodsFactory()
-                );
-                users.add(1L, "test");
-            }
-        );
+        UsersContext context = new PgUsersContext(jdbi);
+
+        context.consume(users -> users.add(1L, "test"));
 
         Assertions.assertEquals(
             "test",
-            jdbi.inTransaction(
-                handle -> new PgUsers(
-                    handle,
-                    new PgPeriodsFactory()
-                ).user(1L).name()
-            )
+            context.callback(users -> users.user(1L).name())
         );
     }
 
     @Test
     void name_userIsPresentAndNameIsNotPresent_returnsDefault(Jdbi jdbi) {
-        jdbi.useTransaction(
-            handle -> new PgUsers(
-                handle,
-                new PgPeriodsFactory()
-            ).add(2L, null)
-        );
+        UsersContext context = new PgUsersContext(jdbi);
+        context.consume(users -> users.add(2L, null));
 
         Assertions.assertEquals(
             "пользователь",
-            jdbi.inTransaction(
-                handle -> new PgUser(
-                    handle,
-                    new PgPeriodsFactory(),
-                    UUID.randomUUID()
-                ).name()
-            )
+            context.callback(users -> users.user(2L).name())
         );
     }
 }
