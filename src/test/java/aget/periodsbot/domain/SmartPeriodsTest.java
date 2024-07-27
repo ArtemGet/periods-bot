@@ -2,11 +2,9 @@ package aget.periodsbot.domain;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
 
-@Testcontainers
 public class SmartPeriodsTest {
     @Test
     void current_periodsIsPresent_returnsCurrent() {

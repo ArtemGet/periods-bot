@@ -12,11 +12,11 @@ public class SendText implements Send<AbsSender> {
     private static final Logger log = LoggerFactory.getLogger(SendText.class);
     private final SendMessage sendMessage;
 
-    public SendText(Update update, String text) {
-        this(update.getMessage().getFrom().getId().toString(), text);
+    public SendText(String text, Update update) {
+        this(text, update.getMessage().getFrom().getId().toString());
     }
 
-    public SendText(String chatId, String text) {
+    public SendText(String text, String chatId) {
         this(new SendMessage(chatId, text));
     }
 

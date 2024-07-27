@@ -17,7 +17,7 @@ public class GreetCmd implements Cmd<Update, AbsSender> {
     }
 
     @Override
-    public Optional<Send<AbsSender>> execute(Update update){
+    public Optional<Send<AbsSender>> execute(Update update) {
         this.context.consume(users ->
             users.add(
                 update.getMessage().getFrom().getId(),
@@ -25,8 +25,8 @@ public class GreetCmd implements Cmd<Update, AbsSender> {
             )
         );
         return Optional.of(new SendText(
-            update,
-            String.format("Приветствую, %s", update.getMessage().getFrom().getUserName())
+            String.format("Приветствую, %s!", update.getMessage().getFrom().getUserName()),
+            update
         ));
     }
 }
