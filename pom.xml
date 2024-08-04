@@ -25,11 +25,11 @@
     </properties>
 
     <dependencies>
-      <dependency>
-        <groupId>com.github.ArtemGet</groupId>
-        <artifactId>teleroute.telegrambots</artifactId>
-        <version>0.2.1</version>
-      </dependency>
+        <dependency>
+            <groupId>com.github.ArtemGet</groupId>
+            <artifactId>teleroute</artifactId>
+            <version>0.3.0</version>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

@@ -9,9 +9,7 @@ import aget.periodsbot.config.BotProps;
 import aget.periodsbot.config.PgProps;
 import aget.periodsbot.context.PgUsersContext;
 import aget.periodsbot.context.UsersContext;
-import com.github.artemget.teleroute.match.MatchAny;
-import com.github.artemget.teleroute.match.MatchTextExact;
-import com.github.artemget.teleroute.match.MatchTextPart;
+import com.github.artemget.teleroute.match.MatchRegex;
 import com.github.artemget.teleroute.route.RouteDfs;
 import com.github.artemget.teleroute.route.RouteFork;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -25,21 +23,15 @@ public class PeriodsbotApplication {
             new BotProps(),
             new RouteDfs<>(
                 new RouteFork<>(
-                    new MatchTextExact<>("/start"),
+                    new MatchRegex<>("/start"),
                     new GreetCmd(context)
                 ),
                 new RouteFork<>(
-                    new MatchAny<>(
-                        new MatchTextPart<>("добавить"),
-                        new MatchTextPart<>("Добавить")
-                    ),
+                    new MatchRegex<>("[Дд]обавить .+"),
                     new NewPeriodCmd(context, convert)
                 ),
                 new RouteFork<>(
-                    new MatchAny<>(
-                        new MatchTextPart<>("удалить"),
-                        new MatchTextPart<>("Удалить")
-                    ),
+                    new MatchRegex<>("[Уу]далить .+"),
                     new RemovePeriodCmd(context, convert)
                 )
             )
