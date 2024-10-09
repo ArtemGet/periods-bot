@@ -6,19 +6,23 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DateConvert implements Function<String, LocalDate> {
+public class StringToDateConvert implements Function<String, LocalDate> {
     private final DateTimeFormatter format;
     private final Pattern pattern;
 
-    public DateConvert(String format, String pattern) {
+    public StringToDateConvert(String format, String pattern) {
         this(format, Pattern.compile(pattern));
     }
 
-    public DateConvert(String format, Pattern pattern) {
+    public StringToDateConvert(String format, Pattern pattern) {
         this(DateTimeFormatter.ofPattern(format), pattern);
     }
 
-    public DateConvert(DateTimeFormatter format, Pattern pattern) {
+    public StringToDateConvert(DateTimeFormatter format, String pattern) {
+        this(format, Pattern.compile(pattern));
+    }
+
+    public StringToDateConvert(DateTimeFormatter format, Pattern pattern) {
         this.format = format;
         this.pattern = pattern;
     }

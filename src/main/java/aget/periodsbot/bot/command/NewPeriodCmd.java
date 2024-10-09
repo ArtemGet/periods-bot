@@ -29,6 +29,6 @@ public class NewPeriodCmd implements Cmd<Update, AbsSender> {
                     update.getMessage().getText()
                 ))
         );
-        return Optional.of(new SendText("Есть, мем!", update));
+        return Optional.of(new SendText("Есть, мэм!", update));
     }
 }
