@@ -8,32 +8,28 @@ import org.junit.jupiter.api.Test;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-
-public class PeriodStatisticCmdTest {
+public class CurrentPeriodCmdTest {
     @Test
-    void execute_periodsArePresent_ShowPeriods() {
+    void execute_periodsArePresent_ShowCurrentPeriods() {
         Update update = new FkUpdate().update();
-        LocalDate last = LocalDate.of(2021, 12, 20);
+        LocalDate last = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         FkTransaction transaction = new FkTransaction();
         transaction.consume(users -> {
             users.add(1L, "test");
-            users.user(1L).periods().add(last);
             users.user(1L).periods().add(last.minusDays(5));
-            users.user(1L).periods().add(last.minusDays(10));
-            users.user(1L).periods().add(last.minusDays(15));
+            users.user(1L).periods().add(last.minusDays(35));
+            users.user(1L).periods().add(last.minusDays(65));
         });
 
         Assertions.assertEquals(
             new SendMsg(update,
-                "20.12.2021 - " + DAYS.between(last, LocalDate.now())
-                    + "\n15.12.2021 - 5"
-                    + "\n10.12.2021 - 5"),
-            new PeriodStatisticCmd(
+                String.format("Началось: %s\nДень: %s\nОсталось: %s", last.minusDays(5).format(formatter), 5, 25)),
+            new CurrentPeriodCmd(
                 transaction,
-                3,
-                "dd.MM.yyyy"
+                formatter
             ).execute(update).orElseGet(() -> new SendMsg(update, "no"))
         );
     }

@@ -39,8 +39,9 @@ public interface Periods {
         public Integer avgLength(Integer count) {
             return Double
                 .valueOf(
-                    periods.last(count)
+                    periods.last(count + 1)
                         .stream()
+                        .skip(1)
                         .mapToLong(Period::days)
                         .average()
                         .orElse(Double.NaN)

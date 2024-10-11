@@ -1,5 +1,6 @@
 package aget.periodsbot.domain;
 
+import aget.periodsbot.domain.fake.FkPeriods;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -28,9 +29,9 @@ public class SmartPeriodsTest {
         Assertions.assertEquals(
             new Periods.SmartPeriods(
                 new FkPeriods(
-                    LocalDate.now().minusDays(20),
-                    LocalDate.now().minusDays(30),
-                    LocalDate.now().minusDays(10)
+                    LocalDate.now().minusDays(5),
+                    LocalDate.now().minusDays(15),
+                    LocalDate.now().minusDays(25)
                 )
             ).avgLength(5),
             10

@@ -1,8 +1,5 @@
 package aget.periodsbot.domain;
 
-import aget.periodsbot.context.PgPeriodsFactory;
-import aget.periodsbot.context.PgTransaction;
-import aget.periodsbot.context.Transaction;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.testing.junit5.JdbiExtension;
 import org.jdbi.v3.testing.junit5.tc.JdbiTestcontainersExtension;

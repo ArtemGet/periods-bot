@@ -1,6 +1,5 @@
 package aget.periodsbot.domain;
 
-import aget.periodsbot.context.PeriodsFactory;
 import org.jdbi.v3.core.Handle;
 
 import java.util.UUID;

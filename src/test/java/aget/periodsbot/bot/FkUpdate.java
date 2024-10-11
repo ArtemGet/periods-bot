@@ -14,7 +14,7 @@ public class FkUpdate {
     }
 
     public FkUpdate(String message) {
-        this("testUser", 1L, message);
+        this("test", 1L, message);
     }
 
     public FkUpdate(String username, Long id, String message) {

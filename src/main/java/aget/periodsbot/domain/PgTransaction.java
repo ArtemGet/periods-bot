@@ -1,7 +1,5 @@
-package aget.periodsbot.context;
+package aget.periodsbot.domain;
 
-import aget.periodsbot.domain.PgUsers;
-import aget.periodsbot.domain.Users;
 import org.jdbi.v3.core.Jdbi;
 
 import java.util.function.Consumer;

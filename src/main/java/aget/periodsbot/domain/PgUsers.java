@@ -1,6 +1,5 @@
 package aget.periodsbot.domain;
 
-import aget.periodsbot.context.PeriodsFactory;
 import org.jdbi.v3.core.Handle;
 
 import java.util.UUID;
@@ -15,24 +14,15 @@ public class PgUsers implements Users {
     }
 
     @Override
-    public User add(Long userTelegramId, String name) {
-        return this.dataSource.registerRowMapper(
-            PgUser.class,
-            (rs, ctx) ->
-                new PgUser(
-                    this.dataSource,
-                    this.periodsFactory,
-                    UUID.fromString(rs.getString("id"))
-                )
-        ).inTransaction(
+    public void add(Long userTelegramId, String name) {
+        this.dataSource.useTransaction(
             handle ->
                 handle.createUpdate("INSERT INTO public.users (id, t_id, name) VALUES (:id, :t_id, :name)")
                     .bind("id", UUID.randomUUID())
                     .bind("t_id", userTelegramId)
                     .bind("name", name)
-                    .executeAndReturnGeneratedKeys("id")
-                    .mapTo(PgUser.class)
-        ).first();
+                    .execute()
+        );
     }
 
     @Override

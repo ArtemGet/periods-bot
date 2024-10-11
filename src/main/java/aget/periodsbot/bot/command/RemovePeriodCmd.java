@@ -1,7 +1,7 @@
 package aget.periodsbot.bot.command;
 
-import aget.periodsbot.bot.send.SendText;
-import aget.periodsbot.context.Transaction;
+import aget.periodsbot.bot.send.SendMsg;
+import aget.periodsbot.domain.Transaction;
 import aget.periodsbot.domain.Users;
 import com.github.artemget.teleroute.command.Cmd;
 import com.github.artemget.teleroute.send.Send;
@@ -30,6 +30,6 @@ public class RemovePeriodCmd implements Cmd<Update, AbsSender> {
                     update.getMessage().getText()
                 ))
         );
-        return Optional.of(new SendText("Есть, мэм!", update));
+        return Optional.of(new SendMsg(update, "Есть, мэм!"));
     }
 }

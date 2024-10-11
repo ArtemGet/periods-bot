@@ -1,4 +1,4 @@
-package aget.periodsbot.context;
+package aget.periodsbot.domain;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
