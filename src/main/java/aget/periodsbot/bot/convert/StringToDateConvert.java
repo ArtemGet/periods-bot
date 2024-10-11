@@ -18,10 +18,6 @@ public class StringToDateConvert implements Function<String, LocalDate> {
         this(DateTimeFormatter.ofPattern(format), pattern);
     }
 
-    public StringToDateConvert(DateTimeFormatter format, String pattern) {
-        this(format, Pattern.compile(pattern));
-    }
-
     public StringToDateConvert(DateTimeFormatter format, Pattern pattern) {
         this.format = format;
         this.pattern = pattern;

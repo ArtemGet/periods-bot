@@ -8,40 +8,40 @@ import aget.periodsbot.bot.command.RemovePeriodCmd;
 import aget.periodsbot.bot.convert.StringToDateConvert;
 import aget.periodsbot.config.BotProps;
 import aget.periodsbot.config.PgProps;
-import aget.periodsbot.context.PgUsersContext;
-import aget.periodsbot.context.UsersContext;
+import aget.periodsbot.context.PgTransaction;
+import aget.periodsbot.context.Transaction;
+import aget.periodsbot.domain.Users;
 import com.github.artemget.teleroute.match.MatchRegex;
 import com.github.artemget.teleroute.route.RouteDfs;
 import com.github.artemget.teleroute.route.RouteFork;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.time.format.DateTimeFormatter;
-
 public class PeriodsbotApplication {
     public static void main(String[] args) throws TelegramApiException {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        StringToDateConvert stringToDateConvert = new StringToDateConvert(formatter, "\\d{2}-\\d{2}-\\d{4}");
+        String dateFormat = "dd-MM-yyyy";
+        StringToDateConvert stringToDateConvert = new StringToDateConvert(dateFormat, "\\d{2}-\\d{2}-\\d{4}");
 
-        UsersContext context = new PgUsersContext(new PgProps().connectionUrl());
+        Transaction<Users> transaction = new PgTransaction(new PgProps().connectionUrl());
 
         new PeriodsBot(
             new BotProps(),
             new RouteDfs<>(
                 new RouteFork<>(
                     new MatchRegex<>("/start"),
-                    new GreetCmd(context)
+                    new GreetCmd(transaction)
                 ),
                 new RouteFork<>(
                     new MatchRegex<>("([Дд]обавить|\\+) \\d{2}-\\d{2}-\\d{4}"),
-                    new NewPeriodCmd(context, stringToDateConvert)
+                    new NewPeriodCmd(transaction, stringToDateConvert)
                 ),
                 new RouteFork<>(
                     new MatchRegex<>("([Уу]далить|\\-) \\d{2}-\\d{2}-\\d{4}"),
-                    new RemovePeriodCmd(context, stringToDateConvert)
+                    new RemovePeriodCmd(transaction, stringToDateConvert)
                 ),
                 new RouteFork<>(
                     new MatchRegex<>("Статистика|Статы"),
-                    new PeriodStatisticCmd(context, formatter)
+                    new PeriodStatisticCmd(transaction, "dd.MM")
+
                 )
             )
         ).start();

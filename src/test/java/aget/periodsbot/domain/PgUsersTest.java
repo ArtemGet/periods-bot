@@ -1,8 +1,8 @@
 package aget.periodsbot.domain;
 
 import aget.periodsbot.context.PgPeriodsFactory;
-import aget.periodsbot.context.PgUsersContext;
-import aget.periodsbot.context.UsersContext;
+import aget.periodsbot.context.PgTransaction;
+import aget.periodsbot.context.Transaction;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.statement.UnableToExecuteStatementException;
 import org.jdbi.v3.testing.junit5.JdbiExtension;
@@ -70,11 +70,11 @@ class PgUsersTest {
 
     @Test
     void user_userIsPresent_returnsUser(Jdbi jdbi) {
-        UsersContext context = new PgUsersContext(jdbi);
-        context.consume(users -> users.add(3L, "test"));
+        Transaction<Users> transaction = new PgTransaction(jdbi);
+        transaction.consume(users -> users.add(3L, "test"));
 
         Assertions.assertDoesNotThrow(
-            () -> context.callback(users -> users.user(3L))
+            () -> transaction.callback(users -> users.user(3L))
         );
     }
 
@@ -82,7 +82,7 @@ class PgUsersTest {
     void user_userIsNotPresent_throws(Jdbi jdbi) {
         Assertions.assertThrows(
             IllegalStateException.class,
-            () -> new PgUsersContext(jdbi)
+            () -> new PgTransaction(jdbi)
                 .callback(users -> users.user(4L))
         );
     }

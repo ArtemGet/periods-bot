@@ -1,24 +1,23 @@
-package aget.periodsbot.domain;
+package aget.periodsbot.bot.command;
 
-import aget.periodsbot.context.PgPeriodsFactory;
+import aget.periodsbot.bot.FkUpdate;
+import aget.periodsbot.bot.send.SendText;
 import aget.periodsbot.context.PgTransaction;
-import aget.periodsbot.context.Transaction;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.testing.junit5.JdbiExtension;
 import org.jdbi.v3.testing.junit5.tc.JdbiTestcontainersExtension;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.MountableFile;
 
-import java.util.UUID;
-
 @Testcontainers
-class PgUserTest {
+public class GreetCmdTest {
     @Container
     public static final JdbcDatabaseContainer<?> dbContainer =
         new PostgreSQLContainer<>("postgres:16-alpine")
@@ -33,39 +32,26 @@ class PgUserTest {
     static JdbiExtension extension = JdbiTestcontainersExtension.instance(dbContainer);
 
     @Test
-    void name_userIsNotPresent_returnsDefault(Jdbi jdbi) {
+    void execute_userIsNotPresent_greetsUser(Jdbi jdbi) {
+        Update update = new FkUpdate("test", 1L, "text").update();
         Assertions.assertEquals(
-            "пользователь",
-            jdbi.inTransaction(
-                handle -> new PgUser(
-                    handle,
-                    new PgPeriodsFactory(),
-                    UUID.randomUUID()
-                ).name()
-            )
-        );
+            new SendText("Приветствую, test!", update),
+            new GreetCmd(
+                new PgTransaction(jdbi)
+            ).execute(update).orElseGet(() -> new SendText("no", update)));
     }
 
     @Test
-    void name_userIsPresent_returnsName(Jdbi jdbi) {
-        Transaction<Users> transaction = new PgTransaction(jdbi);
+    void execute_userIsPresent_greetsUserAgain(Jdbi jdbi) {
+        Update update = new FkUpdate("test", 1L, "text").update();
+        GreetCmd cmd = new GreetCmd(
+            new PgTransaction(jdbi)
+        );
 
-        transaction.consume(users -> users.add(1L, "test"));
+        cmd.execute(update);
 
         Assertions.assertEquals(
-            "test",
-            transaction.callback(users -> users.user(1L).name())
-        );
-    }
-
-    @Test
-    void name_userIsPresentAndNameIsNotPresent_returnsDefault(Jdbi jdbi) {
-        Transaction<Users> transaction = new PgTransaction(jdbi);
-        transaction.consume(users -> users.add(2L, null));
-
-        Assertions.assertEquals(
-            "пользователь",
-            transaction.callback(users -> users.user(2L).name())
-        );
+            new SendText("Приветствую вновь, test!", update),
+            cmd.execute(update).orElseGet(() -> new SendText("no", update)));
     }
 }

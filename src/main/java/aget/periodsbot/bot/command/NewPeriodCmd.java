@@ -1,7 +1,8 @@
 package aget.periodsbot.bot.command;
 
 import aget.periodsbot.bot.send.SendText;
-import aget.periodsbot.context.UsersContext;
+import aget.periodsbot.context.Transaction;
+import aget.periodsbot.domain.Users;
 import com.github.artemget.teleroute.command.Cmd;
 import com.github.artemget.teleroute.send.Send;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -12,17 +13,21 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public class NewPeriodCmd implements Cmd<Update, AbsSender> {
-    private final UsersContext context;
+    private final Transaction<Users> transaction;
     private final Function<String, LocalDate> convert;
 
-    public NewPeriodCmd(UsersContext context, Function<String, LocalDate> convert) {
-        this.context = context;
+    public NewPeriodCmd(Transaction<Users> transaction) {
+        this(transaction, s -> LocalDate.now());
+    }
+
+    public NewPeriodCmd(Transaction<Users> transaction, Function<String, LocalDate> convert) {
+        this.transaction = transaction;
         this.convert = convert;
     }
 
     @Override
-    public Optional<Send<AbsSender>> execute(Update update){
-        context.consume(users ->
+    public Optional<Send<AbsSender>> execute(Update update) {
+        transaction.consume(users ->
             users.user(update.getMessage().getFrom().getId())
                 .periods()
                 .add(convert.apply(

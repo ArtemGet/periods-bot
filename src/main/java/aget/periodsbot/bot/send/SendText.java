@@ -8,6 +8,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.Objects;
+
 public class SendText implements Send<AbsSender> {
     private static final Logger log = LoggerFactory.getLogger(SendText.class);
     private final SendMessage sendMessage;
@@ -31,5 +33,16 @@ public class SendText implements Send<AbsSender> {
         } catch (TelegramApiException e) {
             log.error("Error sending message to chat: {}", this.sendMessage.getChatId(), e);
         }
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        return this == object
+            || object instanceof SendText && this.sendMessage.equals(((SendText) object).sendMessage);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.sendMessage);
     }
 }

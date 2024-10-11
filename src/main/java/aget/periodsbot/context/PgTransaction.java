@@ -7,19 +7,19 @@ import org.jdbi.v3.core.Jdbi;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class PgUsersContext implements UsersContext {
+public class PgTransaction implements Transaction<Users> {
     private final Jdbi db;
     private final PeriodsFactory periodsFactory;
 
-    public PgUsersContext(String url) {
+    public PgTransaction(String url) {
         this(Jdbi.create(url));
     }
 
-    public PgUsersContext(Jdbi db) {
+    public PgTransaction(Jdbi db) {
         this(db, new PgPeriodsFactory());
     }
 
-    public PgUsersContext(Jdbi db, PeriodsFactory periodsFactory) {
+    public PgTransaction(Jdbi db, PeriodsFactory periodsFactory) {
         this.db = db;
         this.periodsFactory = periodsFactory;
     }
