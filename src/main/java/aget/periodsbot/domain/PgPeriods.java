@@ -24,23 +24,23 @@
 
 package aget.periodsbot.domain;
 
-import org.jdbi.v3.core.Handle;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import org.jdbi.v3.core.Handle;
 
-public class PgPeriods implements Periods {
+public final class PgPeriods implements Periods {
     private final Handle dataSource;
+
     private final UUID userId;
 
-    public PgPeriods(Handle dataSource, UUID userId) {
+    public PgPeriods(final Handle dataSource, final UUID userId) {
         this.dataSource = dataSource;
         this.userId = userId;
     }
 
     @Override
-    public void add(LocalDate start) {
+    public void add(final LocalDate start) {
         this.dataSource
             .useTransaction(
                 handle ->
@@ -56,12 +56,13 @@ public class PgPeriods implements Periods {
     }
 
     @Override
-    public List<Period> last(Integer amount) {
+    public List<Period> last(final Integer amount) {
         return this.dataSource.registerRowMapper(
                 Period.class,
                 (rs, ctx) -> new EaPeriod(
                     rs.getDate("start_date").toLocalDate(),
-                    rs.getDate("end_date").toLocalDate())
+                    rs.getDate("end_date").toLocalDate()
+                )
             ).select(
                 """
                     SELECT start_date
@@ -82,7 +83,7 @@ public class PgPeriods implements Periods {
     }
 
     @Override
-    public void remove(LocalDate start) {
+    public void remove(final LocalDate start) {
         this.dataSource.useTransaction(
             handle ->
                 handle.execute("""

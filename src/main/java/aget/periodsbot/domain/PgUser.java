@@ -24,18 +24,21 @@
 
 package aget.periodsbot.domain;
 
+import java.util.UUID;
 import org.jdbi.v3.core.Handle;
 
-import java.util.UUID;
-
-public class PgUser implements User {
+public final class PgUser implements User {
     private final Handle dataSource;
+
     private final PeriodsFactory periodsFactory;
+
     private final UUID userId;
 
-    public PgUser(Handle dataSource,
-                  PeriodsFactory periodsFactory,
-                  UUID userId) {
+    public PgUser(
+        final Handle dataSource,
+        final PeriodsFactory periodsFactory,
+        final UUID userId
+    ) {
         this.dataSource = dataSource;
         this.periodsFactory = periodsFactory;
         this.userId = userId;

@@ -34,36 +34,36 @@ public interface Periods {
 
     void remove(LocalDate start);
 
-    class SmartPeriods implements Periods {
+    final class SmartPeriods implements Periods {
         private final Periods periods;
 
-        public SmartPeriods(Periods periods) {
+        public SmartPeriods(final Periods periods) {
             this.periods = periods;
         }
 
         @Override
-        public void add(LocalDate start) {
-            periods.add(start);
+        public void add(final LocalDate start) {
+            this.periods.add(start);
         }
 
         @Override
-        public List<Period> last(Integer amount) {
-            return periods.last(amount);
+        public List<Period> last(final Integer amount) {
+            return this.periods.last(amount);
         }
 
         @Override
-        public void remove(LocalDate start) {
-            periods.remove(start);
+        public void remove(final LocalDate start) {
+            this.periods.remove(start);
         }
 
         public Period current() {
-            return periods.last(1).get(0);
+            return this.periods.last(1).get(0);
         }
 
-        public Integer avgLength(Integer count) {
+        public Integer avgLength(final Integer count) {
             return Double
                 .valueOf(
-                    periods.last(count + 1)
+                    this.periods.last(count + 1)
                         .stream()
                         .skip(1)
                         .mapToLong(Period::days)

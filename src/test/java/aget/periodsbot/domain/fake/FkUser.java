@@ -26,41 +26,42 @@ package aget.periodsbot.domain.fake;
 
 import aget.periodsbot.domain.Periods;
 import aget.periodsbot.domain.User;
-
 import java.util.Objects;
 
-public class FkUser implements User {
+public final class FkUser implements User {
     private final Long id;
-    private final String name;
-    private final Periods periods;
 
-    public FkUser(Long id, String name, Periods periods) {
+    private final String username;
+
+    private final Periods prds;
+
+    public FkUser(final Long id, final String name, final Periods periods) {
         this.id = id;
-        this.name = name;
-        this.periods = periods;
+        this.username = name;
+        this.prds = periods;
     }
 
     @Override
     public String name() {
-        return this.name;
+        return this.username;
     }
 
     @Override
     public Periods periods() {
-        return this.periods;
+        return this.prds;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         return this == object ||
             object instanceof FkUser
                 && this.id.equals(((FkUser) object).id)
-                && this.name.equals(((FkUser) object).name)
-                && this.periods.equals(((FkUser) object).periods);
+                && this.username.equals(((FkUser) object).username)
+                && this.prds.equals(((FkUser) object).prds);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id, this.name, this.periods);
+        return Objects.hash(this.id, this.username, this.prds);
     }
 }

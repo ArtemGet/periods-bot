@@ -41,16 +41,15 @@ import com.github.artemget.teleroute.command.CmdBatch;
 import com.github.artemget.teleroute.match.MatchRegex;
 import com.github.artemget.teleroute.route.RouteDfs;
 import com.github.artemget.teleroute.route.RouteFork;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public class PeriodsbotApplication {
-    public static void main(String[] args) throws TelegramApiException {
-        Transaction<Users> transaction = new PgTransaction(new PgProps().connectionUrl());
-
+    public static void main(final String[] args) throws TelegramApiException {
+        final Transaction<Users> transaction = new PgTransaction(new PgProps().connectionUrl());
+        final String format = "dd.MM";
         new PeriodsBot(
             new BotProps(),
             new RouteDfs<>(
@@ -71,11 +70,11 @@ public class PeriodsbotApplication {
                 ),
                 new RouteFork<>(
                     new MatchRegex<>("Статистика"),
-                    new PeriodStatisticCmd(transaction, "dd.MM")
+                    new PeriodStatisticCmd(transaction, format)
                 ),
                 new RouteFork<>(
                     new MatchRegex<>("Сегодня"),
-                    new CurrentPeriodCmd(transaction,"dd.MM")
+                    new CurrentPeriodCmd(transaction, format)
                 ),
                 new RouteFork<>(
                     new MatchRegex<>("([Дд]обавить|\\+)\\s*\\d{2}.\\d{2}.\\d{2}"),
@@ -90,7 +89,7 @@ public class PeriodsbotApplication {
                         transaction,
                         new StringToDateConvert(
                             new DateTimeFormatterBuilder()
-                                .appendPattern("dd.MM")
+                                .appendPattern(format)
                                 .parseDefaulting(ChronoField.YEAR, LocalDate.now().getYear())
                                 .toFormatter(),
                             "\\d{2}.\\d{2}"
@@ -122,7 +121,8 @@ public class PeriodsbotApplication {
                     new PeriodStatisticCmd(
                         transaction,
                         s -> Integer.parseInt(s.replaceAll("\\D", "")),
-                        "dd.MM")
+                        format
+                    )
                 )
             )
         ).start();

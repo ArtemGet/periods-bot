@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class BotProps {
+public final class BotProps {
 
     public String botName() {
         return this.property("bot.name");
@@ -38,16 +38,16 @@ public class BotProps {
         return this.property("bot.secret");
     }
 
-    private String property(String name) {
+    private String property(final String name) {
         try (
-            InputStream inputStream =
+            final InputStream inputStream =
                 PgProps.class.getClassLoader().getResourceAsStream(System.getenv("profile"))
         ) {
-            Properties properties = new Properties();
+            final Properties properties = new Properties();
             properties.load(inputStream);
 
             return properties.getProperty(name);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }

@@ -24,13 +24,12 @@
 
 package aget.periodsbot.domain;
 
+import java.util.UUID;
 import org.jdbi.v3.core.Handle;
 
-import java.util.UUID;
-
-public class PgPeriodsFactory implements PeriodsFactory {
+public final class PgPeriodsFactory implements PeriodsFactory {
     @Override
-    public Periods periods(Handle handle, UUID usId) {
+    public Periods periods(final Handle handle, final UUID usId) {
         return new PgPeriods(handle, usId);
     }
 }

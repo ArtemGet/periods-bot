@@ -24,6 +24,8 @@
 
 package aget.periodsbot.domain;
 
+import java.time.LocalDate;
+import java.util.UUID;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.statement.UnableToExecuteStatementException;
 import org.jdbi.v3.testing.junit5.JdbiExtension;
@@ -37,13 +39,10 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.MountableFile;
 
-import java.time.LocalDate;
-import java.util.UUID;
-
 @Testcontainers
-public class PgPeriodsTest {
+final class PgPeriodsTest {
     @Container
-    public static final JdbcDatabaseContainer<?> dbContainer =
+    private static final JdbcDatabaseContainer<?> DB_CONTAINER =
         new PostgreSQLContainer<>("postgres:16-alpine")
             .withReuse(false)
             .withDatabaseName("periods_bot")
@@ -53,11 +52,12 @@ public class PgPeriodsTest {
             );
 
     @RegisterExtension
-    static JdbiExtension extension = JdbiTestcontainersExtension.instance(dbContainer);
+    private final static JdbiExtension EXTENSION = JdbiTestcontainersExtension
+        .instance(PgPeriodsTest.DB_CONTAINER);
 
     @Test
-    void add_userIsPresent_addsNew(Jdbi jdbi) {
-        Transaction<Users> transaction = new PgTransaction(jdbi);
+    void shouldAddPeriodWhenUserIsPresent(final Jdbi jdbi) {
+        final Transaction<Users> transaction = new PgTransaction(jdbi);
         transaction.consume(users -> users.add(1L, "test"));
 
         Assertions.assertDoesNotThrow(() ->
@@ -66,7 +66,7 @@ public class PgPeriodsTest {
     }
 
     @Test
-    void add_userIsNotPresent_throws(Jdbi jdbi) {
+    void throwErrorWhenUserIsNotPresent(final Jdbi jdbi) {
         Assertions.assertThrows(
             UnableToExecuteStatementException.class,
             () -> jdbi.useTransaction(
@@ -79,9 +79,9 @@ public class PgPeriodsTest {
     }
 
     @Test
-    void last_periodIsPresent_returnsLast(Jdbi jdbi) {
-        Transaction<Users> transaction = new PgTransaction(jdbi);
-        LocalDate current = LocalDate.now();
+    void shouldReturnLastPeriods(final Jdbi jdbi) {
+        final Transaction<Users> transaction = new PgTransaction(jdbi);
+        final LocalDate current = LocalDate.now();
 
         transaction.consume(users -> {
             users.add(2L, "test");
@@ -99,9 +99,9 @@ public class PgPeriodsTest {
     }
 
     @Test
-    void remove_periodIsPresent_removes(Jdbi jdbi) {
-        Transaction<Users> transaction = new PgTransaction(jdbi);
-        LocalDate current = LocalDate.now();
+    void shouldRemovePeriod(final Jdbi jdbi) {
+        final Transaction<Users> transaction = new PgTransaction(jdbi);
+        final LocalDate current = LocalDate.now();
 
         transaction.consume(users -> {
             users.add(3L, "test");

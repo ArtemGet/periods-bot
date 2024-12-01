@@ -25,15 +25,14 @@
 package aget.periodsbot.domain;
 
 import aget.periodsbot.domain.fake.FkPeriods;
+import java.time.LocalDate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
-
-public class SmartPeriodsTest {
+final class SmartPeriodsTest {
     @Test
-    void current_periodsIsPresent_returnsCurrent() {
-        LocalDate current = LocalDate.now();
+    void shouldReturnCurrentPeriod() {
+        final LocalDate current = LocalDate.now();
 
         Assertions.assertEquals(
             new Periods.SmartPeriods(
@@ -49,7 +48,7 @@ public class SmartPeriodsTest {
     }
 
     @Test
-    void avgLength_periodsIsPresent_returnsLength() {
+    void shouldReturnAveragePeriodLength() {
         Assertions.assertEquals(
             new Periods.SmartPeriods(
                 new FkPeriods(

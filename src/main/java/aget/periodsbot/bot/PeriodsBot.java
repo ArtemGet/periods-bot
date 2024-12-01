@@ -31,6 +31,7 @@ import com.github.artemget.teleroute.command.CmdException;
 import com.github.artemget.teleroute.route.Route;
 import com.github.artemget.teleroute.send.Send;
 import com.github.artemget.teleroute.send.SendException;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -40,21 +41,27 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
-import java.util.Optional;
+public final class PeriodsBot extends TelegramLongPollingBot {
+    private static final Logger LOG = LoggerFactory.getLogger(PeriodsBot.class);
 
-public class PeriodsBot extends TelegramLongPollingBot {
-    private static final Logger log = LoggerFactory.getLogger(PeriodsBot.class);
     private final BotProps props;
+
     private final TelegramBotsApi telegramBotsApi;
+
     private final Route<Update, AbsSender> route;
 
-    public PeriodsBot(BotProps props, Route<Update, AbsSender> route) throws TelegramApiException {
+    public PeriodsBot(
+        final BotProps props,
+        final Route<Update, AbsSender> route
+    ) throws TelegramApiException {
         this(props, new TelegramBotsApi(DefaultBotSession.class), route);
     }
 
-    public PeriodsBot(BotProps props,
-                      TelegramBotsApi telegramBotsApi,
-                      Route<Update, AbsSender> route) {
+    public PeriodsBot(
+        final BotProps props,
+        final TelegramBotsApi telegramBotsApi,
+        final Route<Update, AbsSender> route
+    ) {
         super(props.botToken());
         this.props = props;
         this.telegramBotsApi = telegramBotsApi;
@@ -76,8 +83,8 @@ public class PeriodsBot extends TelegramLongPollingBot {
     public void start() {
         try {
             this.telegramBotsApi.registerBot(this);
-        } catch (TelegramApiException e) {
-            log.error("Error starting bot: {}", e.getMessage(), e);
+        } catch (final TelegramApiException e) {
+            LOG.error("Error starting bot: {}", e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
@@ -89,7 +96,7 @@ public class PeriodsBot extends TelegramLongPollingBot {
         Optional<Send<AbsSender>> resp;
         try {
             resp = cmd.execute(update);
-        } catch (CmdException exception) {
+        } catch (final CmdException exception) {
             resp = Optional.empty();
             exception.printStackTrace();
         }
@@ -99,7 +106,7 @@ public class PeriodsBot extends TelegramLongPollingBot {
     public void handleSend(final Send<AbsSender> send) {
         try {
             send.send(this);
-        } catch (SendException exception) {
+        } catch (final SendException exception) {
             exception.printStackTrace();
         }
     }

@@ -24,21 +24,21 @@
 
 package aget.periodsbot.domain;
 
+import java.util.UUID;
 import org.jdbi.v3.core.Handle;
 
-import java.util.UUID;
-
-public class PgUsers implements Users {
+public final class PgUsers implements Users {
     private final Handle dataSource;
+
     private final PeriodsFactory periodsFactory;
 
-    public PgUsers(Handle dataSource, PeriodsFactory periodsFactory) {
+    public PgUsers(final Handle dataSource, final PeriodsFactory periodsFactory) {
         this.dataSource = dataSource;
         this.periodsFactory = periodsFactory;
     }
 
     @Override
-    public void add(Long userTelegramId, String name) {
+    public void add(final Long userTelegramId, final String name) {
         this.dataSource.useTransaction(
             handle ->
                 handle.createUpdate("INSERT INTO public.users (id, t_id, name) VALUES (:id, :t_id, :name)")
@@ -50,7 +50,7 @@ public class PgUsers implements Users {
     }
 
     @Override
-    public User user(Long userTelegramId) {
+    public User user(final Long userTelegramId) {
         return this.dataSource.registerRowMapper(
             PgUser.class,
             (rs, ctx) ->

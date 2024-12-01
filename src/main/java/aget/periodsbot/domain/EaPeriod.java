@@ -27,32 +27,33 @@ package aget.periodsbot.domain;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-public class EaPeriod implements Period {
-    private final LocalDate start;
+public final class EaPeriod implements Period {
+    private final LocalDate strt;
+
     private final LocalDate end;
 
-    public EaPeriod(LocalDate start) {
+    public EaPeriod(final LocalDate start) {
         this(start, LocalDate.now());
     }
 
-    public EaPeriod(LocalDate start, Period next) {
+    public EaPeriod(final LocalDate start, final Period next) {
         this(start, next.start());
     }
 
-    public EaPeriod(LocalDate start, LocalDate end) {
-        this.start = start;
+    public EaPeriod(final LocalDate start, final LocalDate end) {
+        this.strt = start;
         this.end = end;
     }
 
     @Override
     public LocalDate start() {
-        return start;
+        return this.strt;
     }
 
     @Override
     public Integer days() {
         return Long
-            .valueOf(Math.abs(ChronoUnit.DAYS.between(start,end)))
+            .valueOf(Math.abs(ChronoUnit.DAYS.between(this.strt, this.end)))
             .intValue() + 1;
     }
 }

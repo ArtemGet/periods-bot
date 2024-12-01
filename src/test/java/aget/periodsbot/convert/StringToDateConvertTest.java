@@ -25,14 +25,13 @@
 package aget.periodsbot.convert;
 
 import aget.periodsbot.bot.convert.StringToDateConvert;
+import java.time.LocalDate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
-
-public class StringToDateConvertTest {
+final class StringToDateConvertTest {
     @Test
-    public void convert_stringWithDate_returnsDate() {
+    void shouldProvideDate() {
         Assertions.assertEquals(
             LocalDate.of(2020, 6, 3),
             new StringToDateConvert("dd-MM-yyyy", "\\d{2}-\\d{2}-\\d{4}")
@@ -41,7 +40,7 @@ public class StringToDateConvertTest {
     }
 
     @Test
-    public void convert_stringWithoutDate_throws() {
+    void throwsWhenWrongFormatProvided() {
         Assertions.assertThrows(
             IllegalStateException.class,
             () -> new StringToDateConvert("dd-MM-yyyy", "\\d{2}-\\d{2}-\\d{4}")

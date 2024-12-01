@@ -38,9 +38,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.MountableFile;
 
 @Testcontainers
-class PgUsersTest {
+final class PgUsersTest {
     @Container
-    public static final JdbcDatabaseContainer<?> dbContainer =
+    private static final JdbcDatabaseContainer<?> DB_CONTAINER =
         new PostgreSQLContainer<>("postgres:16-alpine")
             .withReuse(false)
             .withDatabaseName("periods_bot")
@@ -50,10 +50,11 @@ class PgUsersTest {
             );
 
     @RegisterExtension
-    static JdbiExtension extension = JdbiTestcontainersExtension.instance(dbContainer);
+    private final static JdbiExtension EXTENSION = JdbiTestcontainersExtension
+        .instance(PgUsersTest.DB_CONTAINER);
 
     @Test
-    void add_userIsNotPresent_addsNew(Jdbi jdbi) {
+    void shouldAddNewUser(final Jdbi jdbi) {
         Assertions.assertDoesNotThrow(
             () -> jdbi.useTransaction(
                 handle ->
@@ -66,7 +67,7 @@ class PgUsersTest {
     }
 
     @Test
-    void add_userIsPresent_throws(Jdbi jdbi) {
+    void throwErrorWhenUserAlreadyExists(final Jdbi jdbi) {
         Assertions.assertDoesNotThrow(
             () -> jdbi.useTransaction(
                 handle ->
@@ -90,8 +91,8 @@ class PgUsersTest {
     }
 
     @Test
-    void user_userIsPresent_returnsUser(Jdbi jdbi) {
-        Transaction<Users> transaction = new PgTransaction(jdbi);
+    void shouldReturnUserWhenUserIsPresent(final Jdbi jdbi) {
+        final Transaction<Users> transaction = new PgTransaction(jdbi);
         transaction.consume(users -> users.add(3L, "test"));
 
         Assertions.assertDoesNotThrow(
@@ -100,7 +101,7 @@ class PgUsersTest {
     }
 
     @Test
-    void user_userIsNotPresent_throws(Jdbi jdbi) {
+    void throwErrorWhenUserIsNotPresent(final Jdbi jdbi) {
         Assertions.assertThrows(
             IllegalStateException.class,
             () -> new PgTransaction(jdbi)

@@ -28,18 +28,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class PgProps {
+public final class PgProps {
     public String connectionUrl() {
         try (
-            InputStream inputStream =
+            final InputStream inputStream =
                 PgProps.class.getClassLoader().getResourceAsStream(System.getenv("profile"))
 
         ) {
-            Properties properties = new Properties();
+            final Properties properties = new Properties();
             properties.load(inputStream);
 
             return properties.getProperty("postgres.connection.url");
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }

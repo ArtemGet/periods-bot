@@ -27,20 +27,19 @@ package aget.periodsbot.bot.command;
 import aget.periodsbot.bot.FkUpdate;
 import aget.periodsbot.bot.send.SendMsg;
 import aget.periodsbot.domain.fake.FkTransaction;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
-public class CurrentPeriodCmdTest {
+final class CurrentPeriodCmdTest {
     @Test
-    void execute_periodsArePresent_ShowCurrentPeriods() {
-        Update update = new FkUpdate().update();
-        LocalDate last = LocalDate.now();
-        String format = "dd.MM.yyyy";
-        FkTransaction transaction = new FkTransaction();
+    void shouldReturnCurrentPeriod() {
+        final Update update = new FkUpdate().update();
+        final LocalDate last = LocalDate.now();
+        final String format = "dd.MM.yyyy";
+        final FkTransaction transaction = new FkTransaction();
         transaction.consume(users -> {
             users.add(1L, "test");
             users.user(1L).periods().add(last.minusDays(5));
@@ -49,8 +48,10 @@ public class CurrentPeriodCmdTest {
         });
 
         Assertions.assertEquals(
-            new SendMsg(update,
-                String.format("Началось: %s\nДень: %s\nОсталось: %s", last.minusDays(5).format(DateTimeFormatter.ofPattern(format)), 6, 25)),
+            new SendMsg(
+                update,
+                String.format("Началось: %s\nДень: %s\nОсталось: %s", last.minusDays(5).format(DateTimeFormatter.ofPattern(format)), 6, 25)
+            ),
             new CurrentPeriodCmd(
                 transaction,
                 format

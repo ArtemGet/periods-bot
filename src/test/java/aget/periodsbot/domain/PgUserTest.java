@@ -24,6 +24,7 @@
 
 package aget.periodsbot.domain;
 
+import java.util.UUID;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.testing.junit5.JdbiExtension;
 import org.jdbi.v3.testing.junit5.tc.JdbiTestcontainersExtension;
@@ -36,12 +37,10 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.MountableFile;
 
-import java.util.UUID;
-
 @Testcontainers
-class PgUserTest {
+final class PgUserTest {
     @Container
-    public static final JdbcDatabaseContainer<?> dbContainer =
+    private static final JdbcDatabaseContainer<?> DB_CONTAINER =
         new PostgreSQLContainer<>("postgres:16-alpine")
             .withReuse(false)
             .withDatabaseName("periods_bot")
@@ -51,10 +50,11 @@ class PgUserTest {
             );
 
     @RegisterExtension
-    static JdbiExtension extension = JdbiTestcontainersExtension.instance(dbContainer);
+    private final static JdbiExtension EXTENSION = JdbiTestcontainersExtension
+        .instance(PgUserTest.DB_CONTAINER);
 
     @Test
-    void name_userIsNotPresent_returnsDefault(Jdbi jdbi) {
+    void shouldReturnDefaultNameWhenNameIsNotPresent(final Jdbi jdbi) {
         Assertions.assertEquals(
             "пользователь",
             jdbi.inTransaction(
@@ -68,8 +68,8 @@ class PgUserTest {
     }
 
     @Test
-    void name_userIsPresent_returnsName(Jdbi jdbi) {
-        Transaction<Users> transaction = new PgTransaction(jdbi);
+    void shouldReturnNameWhenNameIsPresent(final Jdbi jdbi) {
+        final Transaction<Users> transaction = new PgTransaction(jdbi);
 
         transaction.consume(users -> users.add(1L, "test"));
 
@@ -80,8 +80,8 @@ class PgUserTest {
     }
 
     @Test
-    void name_userIsPresentAndNameIsNotPresent_returnsDefault(Jdbi jdbi) {
-        Transaction<Users> transaction = new PgTransaction(jdbi);
+    void shouldReturnDefaultNameWhenUserNotHaveName(final Jdbi jdbi) {
+        final Transaction<Users> transaction = new PgTransaction(jdbi);
         transaction.consume(users -> users.add(2L, null));
 
         Assertions.assertEquals(

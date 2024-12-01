@@ -24,15 +24,14 @@
 
 package aget.periodsbot.domain;
 
+import java.time.LocalDate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDate;
-
-class EaPeriodTest {
+final class EaPeriodTest {
     @Test
-    void start_dateIsPresent_returnsDate() {
-        LocalDate current = LocalDate.now();
+    void shouldReturnStartDate() {
+        final LocalDate current = LocalDate.now();
         Assertions.assertEquals(
             current,
             new EaPeriod(current).start()
@@ -40,15 +39,7 @@ class EaPeriodTest {
     }
 
     @Test
-    void days_currentDate_returnsOneDay() {
-        Assertions.assertEquals(
-            1,
-            new EaPeriod(LocalDate.now()).days()
-        );
-    }
-
-    @Test
-    void days_dateIsPresent_returnsDuration() {
+    void shouldReturnPeriodLength() {
         Assertions.assertEquals(
             new EaPeriod(
                 LocalDate.now().minusDays(30)

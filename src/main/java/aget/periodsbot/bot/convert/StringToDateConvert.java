@@ -30,31 +30,32 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StringToDateConvert implements Function<String, LocalDate> {
+public final class StringToDateConvert implements Function<String, LocalDate> {
     private final DateTimeFormatter format;
+
     private final Pattern pattern;
 
-    public StringToDateConvert(String format, String pattern) {
+    public StringToDateConvert(final String format, final String pattern) {
         this(format, Pattern.compile(pattern));
     }
 
-    public StringToDateConvert(String format, Pattern pattern) {
+    public StringToDateConvert(final String format, final Pattern pattern) {
         this(DateTimeFormatter.ofPattern(format), pattern);
     }
 
-    public StringToDateConvert(DateTimeFormatter format, String pattern) {
+    public StringToDateConvert(final DateTimeFormatter format, final String pattern) {
         this(format, Pattern.compile(pattern));
     }
 
-    public StringToDateConvert(DateTimeFormatter format, Pattern pattern) {
+    public StringToDateConvert(final DateTimeFormatter format, final Pattern pattern) {
         this.format = format;
         this.pattern = pattern;
     }
 
     @Override
-    public LocalDate apply(String s) {
-        Matcher matcher = pattern.matcher(s);
+    public LocalDate apply(final String input) {
+        final Matcher matcher = this.pattern.matcher(input);
         matcher.find();
-        return LocalDate.parse(matcher.group(), format);
+        return LocalDate.parse(matcher.group(), this.format);
     }
 }

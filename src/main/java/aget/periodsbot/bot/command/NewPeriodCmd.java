@@ -29,34 +29,38 @@ import aget.periodsbot.domain.Transaction;
 import aget.periodsbot.domain.Users;
 import com.github.artemget.teleroute.command.Cmd;
 import com.github.artemget.teleroute.send.Send;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.bots.AbsSender;
-
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.function.Function;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.bots.AbsSender;
 
-public class NewPeriodCmd implements Cmd<Update, AbsSender> {
+public final class NewPeriodCmd implements Cmd<Update, AbsSender> {
     private final Transaction<Users> transaction;
+
     private final Function<String, LocalDate> convert;
 
-    public NewPeriodCmd(Transaction<Users> transaction) {
+    public NewPeriodCmd(final Transaction<Users> transaction) {
         this(transaction, s -> LocalDate.now());
     }
 
-    public NewPeriodCmd(Transaction<Users> transaction, Function<String, LocalDate> convert) {
+    public NewPeriodCmd(
+        final Transaction<Users> transaction,
+        final Function<String, LocalDate> convert
+    ) {
         this.transaction = transaction;
         this.convert = convert;
     }
 
     @Override
-    public Optional<Send<AbsSender>> execute(Update update) {
-        transaction.consume(users ->
-            users.user(update.getMessage().getFrom().getId())
-                .periods()
-                .add(convert.apply(
-                    update.getMessage().getText()
-                ))
+    public Optional<Send<AbsSender>> execute(final Update update) {
+        this.transaction.consume(
+            users ->
+                users.user(update.getMessage().getFrom().getId())
+                    .periods()
+                    .add(this.convert.apply(
+                        update.getMessage().getText()
+                    ))
         );
         return Optional.of(new SendMsg(update, "Есть, мэм!"));
     }

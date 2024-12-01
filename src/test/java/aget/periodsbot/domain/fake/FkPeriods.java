@@ -27,7 +27,6 @@ package aget.periodsbot.domain.fake;
 import aget.periodsbot.domain.EaPeriod;
 import aget.periodsbot.domain.Period;
 import aget.periodsbot.domain.Periods;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +34,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-public class FkPeriods implements Periods {
+public final class FkPeriods implements Periods {
 
     private final List<LocalDate> periods;
 
@@ -52,15 +51,15 @@ public class FkPeriods implements Periods {
     }
 
     @Override
-    public void add(LocalDate start) {
+    public void add(final LocalDate start) {
         this.periods.add(start);
     }
 
     @Override
-    public List<Period> last(Integer amount) {
-        List<Period> result = new ArrayList<>();
+    public List<Period> last(final Integer amount) {
+        final List<Period> result = new ArrayList<>();
         if (!this.periods.isEmpty()) {
-            List<LocalDate> per = this.periods
+            final List<LocalDate> per = this.periods
                 .stream()
                 .sorted(Comparator.reverseOrder())
                 .limit(amount).toList();
@@ -75,12 +74,12 @@ public class FkPeriods implements Periods {
     }
 
     @Override
-    public void remove(LocalDate start) {
+    public void remove(final LocalDate start) {
         this.periods.removeIf(f -> f.isEqual(start));
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         return this == object ||
             object instanceof FkPeriods
                 && this.periods.equals(((FkPeriods) object).periods);
