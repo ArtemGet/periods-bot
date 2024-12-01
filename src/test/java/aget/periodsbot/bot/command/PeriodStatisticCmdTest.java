@@ -27,9 +27,9 @@ public class PeriodStatisticCmdTest {
 
         Assertions.assertEquals(
             new SendMsg(update,
-                "20.12.2021 - " + DAYS.between(last, LocalDate.now())
-                    + "\n15.12.2021 - 5"
-                    + "\n10.12.2021 - 5"),
+                "20.12.2021 - " + (DAYS.between(last, LocalDate.now())+1)
+                    + "\n15.12.2021 - 6"
+                    + "\n10.12.2021 - 6"),
             new PeriodStatisticCmd(
                 transaction,
                 3,

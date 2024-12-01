@@ -3,7 +3,6 @@ package aget.periodsbot.bot.command;
 import aget.periodsbot.bot.send.KeyboardTgSend;
 import aget.periodsbot.bot.send.SendMsg;
 import com.github.artemget.teleroute.command.Cmd;
-import com.github.artemget.teleroute.command.CmdException;
 import com.github.artemget.teleroute.send.Send;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -28,10 +27,11 @@ public class KeyboardCmd implements Cmd<Update, AbsSender> {
 
     public KeyboardCmd(ReplyKeyboardMarkup keyboardMarkup) {
         this.keyboardMarkup = keyboardMarkup;
+        keyboardMarkup.setResizeKeyboard(true);
     }
 
     @Override
-    public Optional<Send<AbsSender>> execute(Update update) throws CmdException {
+    public Optional<Send<AbsSender>> execute(Update update){
         return Optional.of(
             new SendMsg(
                 new KeyboardTgSend(

@@ -29,6 +29,6 @@ public class EaPeriod implements Period {
     public Integer days() {
         return Long
             .valueOf(Math.abs(ChronoUnit.DAYS.between(start,end)))
-            .intValue();
+            .intValue() + 1;
     }
 }

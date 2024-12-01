@@ -15,7 +15,7 @@ public class CurrentPeriodCmdTest {
     void execute_periodsArePresent_ShowCurrentPeriods() {
         Update update = new FkUpdate().update();
         LocalDate last = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        String format = "dd.MM.yyyy";
         FkTransaction transaction = new FkTransaction();
         transaction.consume(users -> {
             users.add(1L, "test");
@@ -26,10 +26,10 @@ public class CurrentPeriodCmdTest {
 
         Assertions.assertEquals(
             new SendMsg(update,
-                String.format("Началось: %s\nДень: %s\nОсталось: %s", last.minusDays(5).format(formatter), 5, 25)),
+                String.format("Началось: %s\nДень: %s\nОсталось: %s", last.minusDays(5).format(DateTimeFormatter.ofPattern(format)), 6, 25)),
             new CurrentPeriodCmd(
                 transaction,
-                formatter
+                format
             ).execute(update).orElseGet(() -> new SendMsg(update, "no"))
         );
     }

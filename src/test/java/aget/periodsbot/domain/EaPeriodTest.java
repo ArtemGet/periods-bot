@@ -16,12 +16,20 @@ class EaPeriodTest {
     }
 
     @Test
+    void days_currentDate_returnsOneDay() {
+        Assertions.assertEquals(
+            1,
+            new EaPeriod(LocalDate.now()).days()
+        );
+    }
+
+    @Test
     void days_dateIsPresent_returnsDuration() {
         Assertions.assertEquals(
             new EaPeriod(
                 LocalDate.now().minusDays(30)
             ).days(),
-            30
+            31
         );
     }
 }

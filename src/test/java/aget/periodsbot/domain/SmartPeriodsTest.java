@@ -34,7 +34,7 @@ public class SmartPeriodsTest {
                     LocalDate.now().minusDays(25)
                 )
             ).avgLength(5),
-            10
+            11
         );
     }
 }
