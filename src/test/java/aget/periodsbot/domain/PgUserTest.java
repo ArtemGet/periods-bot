@@ -48,7 +48,7 @@ final class PgUserTest {
      * Database container.
      */
     @Container
-    private static final JdbcDatabaseContainer<?> DB_CONTAINER =
+    public static final JdbcDatabaseContainer<?> DB_CONTAINER =
         new PostgreSQLContainer<>("postgres:16-alpine")
             .withReuse(false)
             .withDatabaseName("periods_bot")
@@ -61,7 +61,7 @@ final class PgUserTest {
      * Jdbi extension.
      */
     @RegisterExtension
-    private static final JdbiExtension EXTENSION = JdbiTestcontainersExtension
+    public static final JdbiExtension EXTENSION = JdbiTestcontainersExtension
         .instance(PgUserTest.DB_CONTAINER);
 
     @Test
