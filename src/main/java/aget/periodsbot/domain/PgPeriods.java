@@ -29,68 +29,82 @@ import java.util.List;
 import java.util.UUID;
 import org.jdbi.v3.core.Handle;
 
+/**
+ * {@link Periods} for PostgreSQL database.
+ *
+ * @since 0.1.0
+ */
 public final class PgPeriods implements Periods {
-    private final Handle dataSource;
+    /**
+     * Database connection.
+     */
+    private final Handle source;
 
-    private final UUID userId;
+    /**
+     * User id.
+     */
+    private final UUID id;
 
-    public PgPeriods(final Handle dataSource, final UUID userId) {
-        this.dataSource = dataSource;
-        this.userId = userId;
+    public PgPeriods(final Handle source, final UUID id) {
+        this.source = source;
+        this.id = id;
     }
 
     @Override
     public void add(final LocalDate start) {
-        this.dataSource
-            .useTransaction(
-                handle ->
-                    handle.createUpdate("""
-                            INSERT INTO public.periods (id, user_id, start_date)
-                            VALUES (:id, :user_id, :start_date)
-                            """)
-                        .bind("id", UUID.randomUUID())
-                        .bind("user_id", this.userId)
-                        .bind("start_date", start)
-                        .execute()
-            );
+        this.source.useTransaction(
+            handle ->
+                handle
+                    .createUpdate(
+                        """
+                        INSERT INTO public.periods (id, user_id, start_date)
+                        VALUES (:id, :user_id, :start_date)
+                        """)
+                    .bind("id", UUID.randomUUID())
+                    .bind("user_id", this.id)
+                    .bind("start_date", start)
+                    .execute()
+        );
     }
 
     @Override
     public List<Period> last(final Integer amount) {
-        return this.dataSource.registerRowMapper(
-                Period.class,
-                (rs, ctx) -> new EaPeriod(
-                    rs.getDate("start_date").toLocalDate(),
-                    rs.getDate("end_date").toLocalDate()
-                )
+        return this.source
+            .registerRowMapper(
+                Period.class, (rs, ctx) ->
+                    new EaPeriod(
+                        rs.getDate("start_date").toLocalDate(),
+                        rs.getDate("end_date").toLocalDate()
+                    )
             ).select(
                 """
-                    SELECT start_date
-                    , CASE WHEN end_date IS NULL THEN now() ELSE end_date END
-                    FROM (
-                        SELECT start_date,
-                        lag(start_date) OVER(
-                            ORDER BY start_date DESC,
-                            start_date rows between current row and unbounded following
-                        ) as end_date
-                        FROM public.periods
-                        WHERE user_id = ?
-                        LIMIT ?
-                    ) x""",
-                this.userId, amount
+                SELECT start_date
+                , CASE WHEN end_date IS NULL THEN now() ELSE end_date END
+                FROM (
+                    SELECT start_date,
+                    lag(start_date) OVER(
+                        ORDER BY start_date DESC,
+                        start_date rows between current row and unbounded following
+                    ) as end_date
+                    FROM public.periods
+                    WHERE user_id = ?
+                    LIMIT ?
+                ) x""",
+                this.id, amount
             ).mapTo(Period.class)
             .collectIntoList();
     }
 
     @Override
     public void remove(final LocalDate start) {
-        this.dataSource.useTransaction(
+        this.source.useTransaction(
             handle ->
-                handle.execute("""
-                        DELETE FROM public.periods
-                        WHERE user_id = ?
-                        AND  start_date = ?""",
-                    this.userId, start
+                handle.execute(
+                    """
+                    DELETE FROM public.periods
+                    WHERE user_id = ?
+                    AND  start_date = ?""",
+                    this.id, start
                 )
         );
     }

@@ -29,11 +29,15 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test case for {@link Periods.SmartPeriods}.
+ *
+ * @since 0.1.0
+ */
 final class SmartPeriodsTest {
     @Test
     void shouldReturnCurrentPeriod() {
         final LocalDate current = LocalDate.now();
-
         Assertions.assertEquals(
             new Periods.SmartPeriods(
                 new FkPeriods(

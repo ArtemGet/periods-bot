@@ -27,43 +27,57 @@ package aget.periodsbot.domain;
 import java.util.UUID;
 import org.jdbi.v3.core.Handle;
 
+/**
+ * {@link Users} for PostgreSQL.
+ *
+ * @since 0.1.0
+ */
 public final class PgUsers implements Users {
-    private final Handle dataSource;
+    /**
+     * Database connection.
+     */
+    private final Handle source;
 
-    private final PeriodsFactory periodsFactory;
+    /**
+     * Periods factory.
+     */
+    private final PeriodsFactory periods;
 
-    public PgUsers(final Handle dataSource, final PeriodsFactory periodsFactory) {
-        this.dataSource = dataSource;
-        this.periodsFactory = periodsFactory;
+    public PgUsers(final Handle source, final PeriodsFactory periods) {
+        this.source = source;
+        this.periods = periods;
     }
 
     @Override
-    public void add(final Long userTelegramId, final String name) {
-        this.dataSource.useTransaction(
+    public void add(final Long id, final String name) {
+        this.source.useTransaction(
             handle ->
-                handle.createUpdate("INSERT INTO public.users (id, t_id, name) VALUES (:id, :t_id, :name)")
+                handle
+                    .createUpdate(
+                        "INSERT INTO public.users (id, t_id, name) VALUES (:id, :t_id, :name)"
+                    )
                     .bind("id", UUID.randomUUID())
-                    .bind("t_id", userTelegramId)
+                    .bind("t_id", id)
                     .bind("name", name)
                     .execute()
         );
     }
 
     @Override
-    public User user(final Long userTelegramId) {
-        return this.dataSource.registerRowMapper(
+    public User user(final Long id) {
+        return this.source.registerRowMapper(
             PgUser.class,
             (rs, ctx) ->
                 new PgUser(
-                    this.dataSource,
-                    this.periodsFactory,
+                    this.source,
+                    this.periods,
                     UUID.fromString(rs.getString("id"))
                 )
         ).inTransaction(
             handle ->
                 handle.select(
                     "SELECT id,name FROM public.users WHERE t_id = ?",
-                    userTelegramId
+                    id
                 ).mapTo(PgUser.class)
         ).first();
     }

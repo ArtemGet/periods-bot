@@ -29,40 +29,52 @@ import java.util.function.Supplier;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 
+/**
+ * Provide Telegram keyboard for message.
+ *
+ * @since 0.1.0
+ */
 public final class KeyboardTgSend implements Supplier<SendMessage> {
+    /**
+     * Message text.
+     */
     private final String text;
 
-    private final String chatId;
+    /**
+     * Chat id.
+     */
+    private final String id;
 
-    private final ReplyKeyboardMarkup keyboardMarkup;
+    /**
+     * Keyboard.
+     */
+    private final ReplyKeyboardMarkup keyboard;
 
     public KeyboardTgSend(
-        final String chatId,
-        final String text,
-        final ReplyKeyboardMarkup keyboardMarkup
+        final String id, final String text, final ReplyKeyboardMarkup keyboard
     ) {
-        this.chatId = chatId;
+        this.id = id;
         this.text = text;
-        this.keyboardMarkup = keyboardMarkup;
+        this.keyboard = keyboard;
     }
 
     public SendMessage get() {
-        final SendMessage sendMessage = new SendMessage(this.chatId, this.text);
-        sendMessage.setReplyMarkup(this.keyboardMarkup);
-        return sendMessage;
-    }
-
-    @Override
-    public boolean equals(final Object object) {
-        return this == object ||
-            object instanceof KeyboardTgSend
-                && this.text.equals(((KeyboardTgSend) object).text)
-                && this.chatId.equals(((KeyboardTgSend) object).chatId)
-                && this.keyboardMarkup.equals(((KeyboardTgSend) object).keyboardMarkup);
+        final SendMessage send = new SendMessage(this.id, this.text);
+        send.setReplyMarkup(this.keyboard);
+        return send;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.text, this.chatId, this.keyboardMarkup);
+        return Objects.hash(this.text, this.id, this.keyboard);
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        return this == object
+            || object instanceof KeyboardTgSend
+            && this.text.equals(((KeyboardTgSend) object).text)
+            && this.id.equals(((KeyboardTgSend) object).id)
+            && this.keyboard.equals(((KeyboardTgSend) object).keyboard);
     }
 }

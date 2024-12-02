@@ -24,8 +24,13 @@
 
 package aget.periodsbot.domain;
 
+/**
+ * Users.
+ *
+ * @since 0.1.0
+ */
 public interface Users {
-    void add(Long usTId, String name);
+    void add(Long id, String name);
 
-    User user(Long usTId);
+    User user(Long id);
 }

@@ -37,8 +37,16 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.MountableFile;
 
+/**
+ * Test case for {@link PgUser}.
+ *
+ * @since 0.1.0
+ */
 @Testcontainers
 final class PgUserTest {
+    /**
+     * Database container.
+     */
     @Container
     private static final JdbcDatabaseContainer<?> DB_CONTAINER =
         new PostgreSQLContainer<>("postgres:16-alpine")
@@ -49,8 +57,11 @@ final class PgUserTest {
                 "/docker-entrypoint-initdb.d/"
             );
 
+    /**
+     * Jdbi extension.
+     */
     @RegisterExtension
-    private final static JdbiExtension EXTENSION = JdbiTestcontainersExtension
+    private static final JdbiExtension EXTENSION = JdbiTestcontainersExtension
         .instance(PgUserTest.DB_CONTAINER);
 
     @Test
@@ -70,9 +81,7 @@ final class PgUserTest {
     @Test
     void shouldReturnNameWhenNameIsPresent(final Jdbi jdbi) {
         final Transaction<Users> transaction = new PgTransaction(jdbi);
-
         transaction.consume(users -> users.add(1L, "test"));
-
         Assertions.assertEquals(
             "test",
             transaction.callback(users -> users.user(1L).name())
@@ -83,7 +92,6 @@ final class PgUserTest {
     void shouldReturnDefaultNameWhenUserNotHaveName(final Jdbi jdbi) {
         final Transaction<Users> transaction = new PgTransaction(jdbi);
         transaction.consume(users -> users.add(2L, null));
-
         Assertions.assertEquals(
             "пользователь",
             transaction.callback(users -> users.user(2L).name())

@@ -26,6 +26,11 @@ package aget.periodsbot.domain;
 
 import java.time.LocalDate;
 
+/**
+ * User's period.
+ *
+ * @since 0.1.0
+ */
 public interface Period {
     LocalDate start();
 

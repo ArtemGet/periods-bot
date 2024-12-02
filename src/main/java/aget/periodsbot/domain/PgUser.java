@@ -27,30 +27,45 @@ package aget.periodsbot.domain;
 import java.util.UUID;
 import org.jdbi.v3.core.Handle;
 
+/**
+ * {@link User} for PostgreSQL database.
+ *
+ * @since 0.1.0
+ */
 public final class PgUser implements User {
-    private final Handle dataSource;
+    /**
+     * Database connection.
+     */
+    private final Handle source;
 
-    private final PeriodsFactory periodsFactory;
+    /**
+     * Periods factory.
+     */
+    private final PeriodsFactory periods;
 
-    private final UUID userId;
+    /**
+     * User id.
+     */
+    private final UUID id;
 
     public PgUser(
-        final Handle dataSource,
-        final PeriodsFactory periodsFactory,
-        final UUID userId
+        final Handle source,
+        final PeriodsFactory periods,
+        final UUID id
     ) {
-        this.dataSource = dataSource;
-        this.periodsFactory = periodsFactory;
-        this.userId = userId;
+        this.source = source;
+        this.periods = periods;
+        this.id = id;
     }
 
     @Override
     public String name() {
-        return this.dataSource.inTransaction(
+        return this.source
+            .inTransaction(
                 handle ->
                     handle.select(
                         "SELECT name FROM public.users WHERE id = ?",
-                        this.userId
+                        this.id
                     ).mapTo(String.class)
             ).findFirst()
             .orElse("пользователь");
@@ -58,6 +73,6 @@ public final class PgUser implements User {
 
     @Override
     public Periods periods() {
-        return this.periodsFactory.periods(this.dataSource, this.userId);
+        return this.periods.periods(this.source, this.id);
     }
 }

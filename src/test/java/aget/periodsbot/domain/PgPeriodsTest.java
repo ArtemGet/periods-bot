@@ -39,8 +39,16 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.MountableFile;
 
+/**
+ * Test case for {@link PgPeriods}.
+ *
+ * @since 0.1.0
+ */
 @Testcontainers
 final class PgPeriodsTest {
+    /**
+     * Database container.
+     */
     @Container
     private static final JdbcDatabaseContainer<?> DB_CONTAINER =
         new PostgreSQLContainer<>("postgres:16-alpine")
@@ -51,17 +59,19 @@ final class PgPeriodsTest {
                 "/docker-entrypoint-initdb.d/"
             );
 
+    /**
+     * Jdbi extension.
+     */
     @RegisterExtension
-    private final static JdbiExtension EXTENSION = JdbiTestcontainersExtension
+    private static final JdbiExtension EXTENSION = JdbiTestcontainersExtension
         .instance(PgPeriodsTest.DB_CONTAINER);
 
     @Test
     void shouldAddPeriodWhenUserIsPresent(final Jdbi jdbi) {
         final Transaction<Users> transaction = new PgTransaction(jdbi);
         transaction.consume(users -> users.add(1L, "test"));
-
-        Assertions.assertDoesNotThrow(() ->
-            transaction.callback(users -> users.user(1L))
+        Assertions.assertDoesNotThrow(
+            () -> transaction.callback(users -> users.user(1L))
         );
     }
 
@@ -82,18 +92,18 @@ final class PgPeriodsTest {
     void shouldReturnLastPeriods(final Jdbi jdbi) {
         final Transaction<Users> transaction = new PgTransaction(jdbi);
         final LocalDate current = LocalDate.now();
-
-        transaction.consume(users -> {
-            users.add(2L, "test");
-            users.user(2L).periods().add(current);
-        });
-
+        transaction.consume(
+            users -> {
+                users.add(2L, "test");
+                users.user(2L).periods().add(current);
+            });
         Assertions.assertEquals(
             current,
-            transaction.callback(users ->
-                users.user(2L)
-                    .periods()
-                    .last(10)
+            transaction.callback(
+                users ->
+                    users.user(2L)
+                        .periods()
+                        .last(10)
             ).get(0).start()
         );
     }
@@ -102,12 +112,11 @@ final class PgPeriodsTest {
     void shouldRemovePeriod(final Jdbi jdbi) {
         final Transaction<Users> transaction = new PgTransaction(jdbi);
         final LocalDate current = LocalDate.now();
-
-        transaction.consume(users -> {
-            users.add(3L, "test");
-            users.user(3L).periods().add(current);
-        });
-
+        transaction.consume(
+            users -> {
+                users.add(3L, "test");
+                users.user(3L).periods().add(current);
+            });
         Assertions.assertDoesNotThrow(
             () -> transaction.consume(
                 users -> users.user(3L).periods().remove(current)

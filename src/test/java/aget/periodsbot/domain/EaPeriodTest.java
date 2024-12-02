@@ -28,6 +28,11 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Test case for {@link EaPeriod}.
+ *
+ * @since 0.1.0
+ */
 final class EaPeriodTest {
     @Test
     void shouldReturnStartDate() {

@@ -29,7 +29,15 @@ import aget.periodsbot.domain.Users;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+/**
+ * Fake users.
+ *
+ * @since 0.1.0
+ */
 public final class FkUsers implements Users {
+    /**
+     * Collection of users.
+     */
     private final Dictionary<Long, User> users;
 
     public FkUsers() {
@@ -41,12 +49,12 @@ public final class FkUsers implements Users {
     }
 
     @Override
-    public void add(final Long usTId, final String name) {
-        this.users.put(usTId, new FkUser(usTId, name, new FkPeriods()));
+    public void add(final Long id, final String name) {
+        this.users.put(id, new FkUser(id, name, new FkPeriods()));
     }
 
     @Override
-    public User user(final Long usTId) {
-        return this.users.get(usTId);
+    public User user(final Long id) {
+        return this.users.get(id);
     }
 }

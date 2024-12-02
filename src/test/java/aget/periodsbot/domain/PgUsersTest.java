@@ -37,8 +37,16 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.MountableFile;
 
+/**
+ * Test case for {@link PgUsers}.
+ *
+ * @since 0.1.0
+ */
 @Testcontainers
 final class PgUsersTest {
+    /**
+     * Database container.
+     */
     @Container
     private static final JdbcDatabaseContainer<?> DB_CONTAINER =
         new PostgreSQLContainer<>("postgres:16-alpine")
@@ -49,8 +57,11 @@ final class PgUsersTest {
                 "/docker-entrypoint-initdb.d/"
             );
 
+    /**
+     * Jdbi extension.
+     */
     @RegisterExtension
-    private final static JdbiExtension EXTENSION = JdbiTestcontainersExtension
+    private static final JdbiExtension EXTENSION = JdbiTestcontainersExtension
         .instance(PgUsersTest.DB_CONTAINER);
 
     @Test
@@ -77,7 +88,6 @@ final class PgUsersTest {
                     ).add(2L, "test")
             )
         );
-
         Assertions.assertThrows(
             UnableToExecuteStatementException.class,
             () -> jdbi.useTransaction(
@@ -94,7 +104,6 @@ final class PgUsersTest {
     void shouldReturnUserWhenUserIsPresent(final Jdbi jdbi) {
         final Transaction<Users> transaction = new PgTransaction(jdbi);
         transaction.consume(users -> users.add(3L, "test"));
-
         Assertions.assertDoesNotThrow(
             () -> transaction.callback(users -> users.user(3L))
         );

@@ -29,7 +29,15 @@ import java.util.Optional;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+/**
+ * Telegram update wrapper.
+ *
+ * @since 0.1.0
+ */
 public final class TgBotWrap implements Wrap<Update> {
+    /**
+     * Telegram update.
+     */
     private final Update update;
 
     public TgBotWrap(final Update update) {

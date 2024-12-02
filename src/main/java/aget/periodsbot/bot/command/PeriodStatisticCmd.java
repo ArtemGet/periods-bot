@@ -37,12 +37,25 @@ import java.util.stream.Collectors;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
+/**
+ * Command show user's last periods.
+ *
+ * @since 0.1.0
+ */
 public final class PeriodStatisticCmd implements Cmd<Update, AbsSender> {
-
+    /**
+     * Transaction.
+     */
     private final Transaction<Users> transaction;
 
-    private final Function<String, Integer> amount;
+    /**
+     * Convert count entered by user to integer.
+     */
+    private final Function<String, Integer> count;
 
+    /**
+     * Date display format.
+     */
     private final DateTimeFormatter formatter;
 
     public PeriodStatisticCmd(
@@ -54,27 +67,27 @@ public final class PeriodStatisticCmd implements Cmd<Update, AbsSender> {
 
     public PeriodStatisticCmd(
         final Transaction<Users> transaction,
-        final Integer amount,
+        final Integer count,
         final String format
     ) {
-        this(transaction, s -> amount, DateTimeFormatter.ofPattern(format));
+        this(transaction, s -> count, DateTimeFormatter.ofPattern(format));
     }
 
     public PeriodStatisticCmd(
         final Transaction<Users> transaction,
-        final Function<String, Integer> amount,
+        final Function<String, Integer> count,
         final String format
     ) {
-        this(transaction, amount, DateTimeFormatter.ofPattern(format));
+        this(transaction, count, DateTimeFormatter.ofPattern(format));
     }
 
     public PeriodStatisticCmd(
         final Transaction<Users> transaction,
-        final Function<String, Integer> amount,
+        final Function<String, Integer> count,
         final DateTimeFormatter formatter
     ) {
         this.transaction = transaction;
-        this.amount = amount;
+        this.count = count;
         this.formatter = formatter;
     }
 
@@ -87,10 +100,14 @@ public final class PeriodStatisticCmd implements Cmd<Update, AbsSender> {
                     users ->
                         new Periods.SmartPeriods(
                             users.user(update.getMessage().getFrom().getId()).periods()
-                        ).last(this.amount.apply(update.getMessage().getText()))
+                        ).last(this.count.apply(update.getMessage().getText()))
                             .stream()
                             .map(
-                                p -> p.start().format(this.formatter) + " - " + p.days().toString())
+                                p -> String.format(
+                                    "%s - %s",
+                                    p.start().format(this.formatter),
+                                    p.days().toString()
+                                ))
                             .collect(Collectors.joining("\n"))
                 )
             )

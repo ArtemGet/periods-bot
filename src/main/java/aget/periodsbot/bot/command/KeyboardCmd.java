@@ -37,7 +37,15 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
+/**
+ * Command to display keyboard.
+ *
+ * @since 0.1.0
+ */
 public final class KeyboardCmd implements Cmd<Update, AbsSender> {
+    /**
+     * Keyboard markup.
+     */
     private final ReplyKeyboardMarkup keyboard;
 
     public KeyboardCmd(final String... buttons) {

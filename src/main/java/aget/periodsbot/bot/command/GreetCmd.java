@@ -33,7 +33,15 @@ import java.util.Optional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
+/**
+ * Command adds new user and greet him.
+ *
+ * @since 0.1.0
+ */
 public final class GreetCmd implements Cmd<Update, AbsSender> {
+    /**
+     * Transaction.
+     */
     private final Transaction<Users> transaction;
 
     public GreetCmd(final Transaction<Users> transaction) {

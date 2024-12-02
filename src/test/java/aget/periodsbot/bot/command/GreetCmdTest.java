@@ -33,12 +33,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+/**
+ * Test case for {@link GreetCmd}.
+ *
+ * @since 0.1.0
+ */
 final class GreetCmdTest {
     @Test
     void shouldAddNewUser() {
         final Update update = new FkUpdate("test", 1L, "text").update();
         final FkTransaction transaction = new FkTransaction();
-
         Assertions.assertEquals(
             new SendMsg(update, "Приветствую, test!"),
             new GreetCmd(transaction)

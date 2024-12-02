@@ -34,40 +34,55 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+/**
+ * Send message to chat.
+ *
+ * @since 0.1.0
+ */
 public final class SendMsg implements Send<AbsSender> {
-    private static final Logger log = LoggerFactory.getLogger(SendMsg.class);
+    /**
+     * Logger.
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(SendMsg.class);
 
-    private final Supplier<SendMessage> tgSend;
+    /**
+     * Telegram message provider.
+     */
+    private final Supplier<SendMessage> tgsend;
 
     public SendMsg(final Update update, final String text) {
         this(new TextTgSend(update.getMessage().getFrom().getId().toString(), text));
     }
 
-    public SendMsg(final String chatId, final String text) {
-        this(new TextTgSend(chatId, text));
+    public SendMsg(final String id, final String text) {
+        this(new TextTgSend(id, text));
     }
 
-    public SendMsg(final Supplier<SendMessage> tgSend) {
-        this.tgSend = tgSend;
+    public SendMsg(final Supplier<SendMessage> tgsend) {
+        this.tgsend = tgsend;
     }
 
     @Override
     public void send(final AbsSender send) {
         try {
-            send.execute(this.tgSend.get());
-        } catch (final TelegramApiException e) {
-            log.error("Error sending message to chat: {}", this.tgSend.get().getChatId(), e);
+            send.execute(this.tgsend.get());
+        } catch (final TelegramApiException exception) {
+            LOG.error(
+                "Error sending message to chat: {}",
+                this.tgsend.get().getChatId(),
+                exception
+            );
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.tgsend);
     }
 
     @Override
     public boolean equals(final Object object) {
         return this == object
-            || object instanceof SendMsg && this.tgSend.equals(((SendMsg) object).tgSend);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.tgSend);
+            || object instanceof SendMsg && this.tgsend.equals(((SendMsg) object).tgsend);
     }
 }

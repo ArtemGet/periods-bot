@@ -29,8 +29,15 @@ import aget.periodsbot.domain.Users;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ * Fake transaction implementation.
+ *
+ * @since 0.1.0
+ */
 public final class FkTransaction implements Transaction<Users> {
-
+    /**
+     * Users.
+     */
     private final Users users;
 
     public FkTransaction() {
@@ -42,12 +49,12 @@ public final class FkTransaction implements Transaction<Users> {
     }
 
     @Override
-    public <R> R callback(final Function<Users, R> fn) {
-        return fn.apply(this.users);
+    public <R> R callback(final Function<Users, R> function) {
+        return function.apply(this.users);
     }
 
     @Override
-    public void consume(final Consumer<Users> fn) {
-        fn.accept(this.users);
+    public void consume(final Consumer<Users> consumer) {
+        consumer.accept(this.users);
     }
 }

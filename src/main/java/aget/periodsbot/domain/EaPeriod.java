@@ -27,9 +27,20 @@ package aget.periodsbot.domain;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * Eager user's period.
+ *
+ * @since 0.1.0
+ */
 public final class EaPeriod implements Period {
+    /**
+     * Period start.
+     */
     private final LocalDate strt;
 
+    /**
+     * Period end.
+     */
     private final LocalDate end;
 
     public EaPeriod(final LocalDate start) {

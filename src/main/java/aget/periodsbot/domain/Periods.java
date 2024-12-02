@@ -27,6 +27,11 @@ package aget.periodsbot.domain;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * User's periods.
+ *
+ * @since 0.1.0
+ */
 public interface Periods {
     void add(LocalDate start);
 
@@ -35,6 +40,9 @@ public interface Periods {
     void remove(LocalDate start);
 
     final class SmartPeriods implements Periods {
+        /**
+         * Periods.
+         */
         private final Periods periods;
 
         public SmartPeriods(final Periods periods) {

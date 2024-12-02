@@ -34,12 +34,19 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Fake periods.
+ *
+ * @since 0.1.0
+ */
 public final class FkPeriods implements Periods {
-
+    /**
+     * Periods.
+     */
     private final List<LocalDate> periods;
 
     public FkPeriods() {
-        this(new ArrayList<>());
+        this(new ArrayList<>(5));
     }
 
     public FkPeriods(final LocalDate... periods) {
@@ -57,17 +64,15 @@ public final class FkPeriods implements Periods {
 
     @Override
     public List<Period> last(final Integer amount) {
-        final List<Period> result = new ArrayList<>();
+        final List<Period> result = new ArrayList<>(amount);
         if (!this.periods.isEmpty()) {
             final List<LocalDate> per = this.periods
                 .stream()
                 .sorted(Comparator.reverseOrder())
                 .limit(amount).toList();
-
             result.add(new EaPeriod(per.get(0)));
-
-            for (int i = 1; i < per.size(); i++) {
-                result.add(new EaPeriod(per.get(i), per.get(i - 1)));
+            for (int iter = 1; iter < per.size(); iter += 1) {
+                result.add(new EaPeriod(per.get(iter), per.get(iter - 1)));
             }
         }
         return result;
@@ -79,14 +84,14 @@ public final class FkPeriods implements Periods {
     }
 
     @Override
-    public boolean equals(final Object object) {
-        return this == object ||
-            object instanceof FkPeriods
-                && this.periods.equals(((FkPeriods) object).periods);
+    public int hashCode() {
+        return Objects.hash(this.periods);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(this.periods);
+    public boolean equals(final Object object) {
+        return this == object
+            || object instanceof FkPeriods
+            && this.periods.equals(((FkPeriods) object).periods);
     }
 }

@@ -30,9 +30,20 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Converts string to {@link LocalDate}.
+ *
+ * @since 0.1.0
+ */
 public final class StringToDateConvert implements Function<String, LocalDate> {
+    /**
+     * Date format.
+     */
     private final DateTimeFormatter format;
 
+    /**
+     * Pattern.
+     */
     private final Pattern pattern;
 
     public StringToDateConvert(final String format, final String pattern) {

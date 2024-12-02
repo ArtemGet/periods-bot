@@ -28,30 +28,41 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
+/**
+ * Provide Telegram text message.
+ *
+ * @since 0.1.0
+ */
 public final class TextTgSend implements Supplier<SendMessage> {
+    /**
+     * Message text.
+     */
     private final String text;
 
-    private final String chatId;
+    /**
+     * Chat id.
+     */
+    private final String id;
 
-    public TextTgSend(final String text, final String chatId) {
+    public TextTgSend(final String text, final String id) {
         this.text = text;
-        this.chatId = chatId;
+        this.id = id;
     }
 
     public SendMessage get() {
-        return new SendMessage(this.text, this.chatId);
-    }
-
-    @Override
-    public boolean equals(final Object object) {
-        return this == object ||
-            object instanceof TextTgSend
-                && this.text.equals(((TextTgSend) object).text)
-                && this.chatId.equals(((TextTgSend) object).chatId);
+        return new SendMessage(this.text, this.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.text, this.chatId);
+        return Objects.hash(this.text, this.id);
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        return this == object
+            || object instanceof TextTgSend
+            && this.text.equals(((TextTgSend) object).text)
+            && this.id.equals(((TextTgSend) object).id);
     }
 }

@@ -28,11 +28,25 @@ import aget.periodsbot.domain.Periods;
 import aget.periodsbot.domain.User;
 import java.util.Objects;
 
+/**
+ * Fake user.
+ *
+ * @since 0.1.0
+ */
 public final class FkUser implements User {
+    /**
+     * Id.
+     */
     private final Long id;
 
+    /**
+     * Name.
+     */
     private final String username;
 
+    /**
+     * Periods.
+     */
     private final Periods prds;
 
     public FkUser(final Long id, final String name, final Periods periods) {
@@ -52,16 +66,15 @@ public final class FkUser implements User {
     }
 
     @Override
-    public boolean equals(final Object object) {
-        return this == object ||
-            object instanceof FkUser
-                && this.id.equals(((FkUser) object).id)
-                && this.username.equals(((FkUser) object).username)
-                && this.prds.equals(((FkUser) object).prds);
+    public int hashCode() {
+        return Objects.hash(this.id, this.username, this.prds);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(this.id, this.username, this.prds);
+    public boolean equals(final Object object) {
+        return this == object || object instanceof FkUser
+            && this.id.equals(((FkUser) object).id)
+            && this.username.equals(((FkUser) object).username)
+            && this.prds.equals(((FkUser) object).prds);
     }
 }

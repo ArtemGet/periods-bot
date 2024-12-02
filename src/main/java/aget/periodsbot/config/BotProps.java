@@ -28,7 +28,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * Properties for bot.
+ *
+ * @since 0.1.0
+ */
 public final class BotProps {
+    /**
+     * Profile.
+     */
+    private final String profile;
+
+    public BotProps() {
+        this(System.getenv("profile"));
+    }
+
+    public BotProps(final String profile) {
+        this.profile = profile;
+    }
 
     public String botName() {
         return this.property("bot.name");
@@ -40,15 +57,16 @@ public final class BotProps {
 
     private String property(final String name) {
         try (
-            final InputStream inputStream =
-                PgProps.class.getClassLoader().getResourceAsStream(System.getenv("profile"))
+            InputStream inputStream =
+                Thread.currentThread()
+                    .getContextClassLoader()
+                    .getResourceAsStream(this.profile)
         ) {
             final Properties properties = new Properties();
             properties.load(inputStream);
-
             return properties.getProperty(name);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
+        } catch (final IOException exception) {
+            throw new RuntimeException(exception);
         }
     }
 }

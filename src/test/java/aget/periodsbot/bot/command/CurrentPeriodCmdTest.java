@@ -33,6 +33,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+/**
+ * Test case for {@link CurrentPeriodCmd}.
+ *
+ * @since 0.1.0
+ */
 final class CurrentPeriodCmdTest {
     @Test
     void shouldReturnCurrentPeriod() {
@@ -40,17 +45,22 @@ final class CurrentPeriodCmdTest {
         final LocalDate last = LocalDate.now();
         final String format = "dd.MM.yyyy";
         final FkTransaction transaction = new FkTransaction();
-        transaction.consume(users -> {
-            users.add(1L, "test");
-            users.user(1L).periods().add(last.minusDays(5));
-            users.user(1L).periods().add(last.minusDays(35));
-            users.user(1L).periods().add(last.minusDays(65));
-        });
-
+        transaction.consume(
+            users -> {
+                users.add(1L, "test");
+                users.user(1L).periods().add(last.minusDays(5));
+                users.user(1L).periods().add(last.minusDays(35));
+                users.user(1L).periods().add(last.minusDays(65));
+            });
         Assertions.assertEquals(
             new SendMsg(
                 update,
-                String.format("Началось: %s\nДень: %s\nОсталось: %s", last.minusDays(5).format(DateTimeFormatter.ofPattern(format)), 6, 25)
+                String.format(
+                    "Началось: %s\nДень: %s\nОсталось: %s",
+                    last.minusDays(5).format(DateTimeFormatter.ofPattern(format)),
+                    6,
+                    25
+                )
             ),
             new CurrentPeriodCmd(
                 transaction,

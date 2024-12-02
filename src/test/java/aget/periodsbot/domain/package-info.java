@@ -23,14 +23,3 @@
  */
 
 package aget.periodsbot.domain;
-
-/**
- * User.
- *
- * @since 0.1.0
- */
-public interface User {
-    String name();
-
-    Periods periods();
-}

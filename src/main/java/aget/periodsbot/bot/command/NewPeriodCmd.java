@@ -35,9 +35,20 @@ import java.util.function.Function;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
+/**
+ * Command adds new period for user.
+ *
+ * @since 0.1.0
+ */
 public final class NewPeriodCmd implements Cmd<Update, AbsSender> {
+    /**
+     * Transaction.
+     */
     private final Transaction<Users> transaction;
 
+    /**
+     * Convert date entered by the user to LocalDate.
+     */
     private final Function<String, LocalDate> convert;
 
     public NewPeriodCmd(final Transaction<Users> transaction) {
@@ -58,9 +69,10 @@ public final class NewPeriodCmd implements Cmd<Update, AbsSender> {
             users ->
                 users.user(update.getMessage().getFrom().getId())
                     .periods()
-                    .add(this.convert.apply(
-                        update.getMessage().getText()
-                    ))
+                    .add(
+                        this.convert.apply(
+                            update.getMessage().getText()
+                        ))
         );
         return Optional.of(new SendMsg(update, "Есть, мэм!"));
     }

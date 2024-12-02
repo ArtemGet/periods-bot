@@ -28,35 +28,48 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import org.jdbi.v3.core.Jdbi;
 
+/**
+ * {@link Transaction} for PostgreSQL database.
+ *
+ * @since 0.1.0
+ */
 public final class PgTransaction implements Transaction<Users> {
-    private final Jdbi db;
+    /**
+     * Database connection.
+     */
+    private final Jdbi jdbi;
 
-    private final PeriodsFactory periodsFactory;
+    /**
+     * Periods factory.
+     */
+    private final PeriodsFactory periods;
 
     public PgTransaction(final String url) {
         this(Jdbi.create(url));
     }
 
-    public PgTransaction(final Jdbi db) {
-        this(db, new PgPeriodsFactory());
+    public PgTransaction(final Jdbi jdbi) {
+        this(jdbi, new PgPeriodsFactory());
     }
 
-    public PgTransaction(final Jdbi db, final PeriodsFactory periodsFactory) {
-        this.db = db;
-        this.periodsFactory = periodsFactory;
+    public PgTransaction(final Jdbi jdbi, final PeriodsFactory periods) {
+        this.jdbi = jdbi;
+        this.periods = periods;
     }
 
     @Override
-    public <R> R callback(final Function<Users, R> fn) {
-        return this.db.inTransaction(handle ->
-            fn.apply(new PgUsers(handle, this.periodsFactory))
+    public <R> R callback(final Function<Users, R> function) {
+        return this.jdbi.inTransaction(
+            handle ->
+                function.apply(new PgUsers(handle, this.periods))
         );
     }
 
     @Override
-    public void consume(final Consumer<Users> fn) {
-        this.db.useTransaction(handle ->
-            fn.accept(new PgUsers(handle, this.periodsFactory))
+    public void consume(final Consumer<Users> consumer) {
+        this.jdbi.useTransaction(
+            handle ->
+                consumer.accept(new PgUsers(handle, this.periods))
         );
     }
 }

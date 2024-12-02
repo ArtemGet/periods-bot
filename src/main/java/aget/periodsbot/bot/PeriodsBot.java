@@ -41,13 +41,30 @@ import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
+/**
+ * Main bot class.
+ *
+ * @since 0.1.0
+ */
 public final class PeriodsBot extends TelegramLongPollingBot {
+    /**
+     * Logger.
+     */
     private static final Logger LOG = LoggerFactory.getLogger(PeriodsBot.class);
 
+    /**
+     * Bot properties.
+     */
     private final BotProps props;
 
-    private final TelegramBotsApi telegramBotsApi;
+    /**
+     * Telegram bots API.
+     */
+    private final TelegramBotsApi api;
 
+    /**
+     * Route.
+     */
     private final Route<Update, AbsSender> route;
 
     public PeriodsBot(
@@ -59,19 +76,19 @@ public final class PeriodsBot extends TelegramLongPollingBot {
 
     public PeriodsBot(
         final BotProps props,
-        final TelegramBotsApi telegramBotsApi,
+        final TelegramBotsApi api,
         final Route<Update, AbsSender> route
     ) {
         super(props.botToken());
         this.props = props;
-        this.telegramBotsApi = telegramBotsApi;
+        this.api = api;
         this.route = route;
     }
 
     @Override
     public void onUpdateReceived(final Update update) {
         this.route.route(new TgBotWrap(update))
-            .flatMap(cmd -> this.handleExecution(cmd, update))
+            .flatMap(cmd -> handleExecution(cmd, update))
             .ifPresent(this::handleSend);
     }
 
@@ -82,14 +99,14 @@ public final class PeriodsBot extends TelegramLongPollingBot {
 
     public void start() {
         try {
-            this.telegramBotsApi.registerBot(this);
-        } catch (final TelegramApiException e) {
-            LOG.error("Error starting bot: {}", e.getMessage(), e);
-            throw new RuntimeException(e);
+            this.api.registerBot(this);
+        } catch (final TelegramApiException exception) {
+            LOG.error("Error starting bot: {}", exception.getMessage(), exception);
+            throw new RuntimeException(exception);
         }
     }
 
-    public Optional<Send<AbsSender>> handleExecution(
+    private static Optional<Send<AbsSender>> handleExecution(
         final Cmd<Update, AbsSender> cmd,
         final Update update
     ) {
@@ -98,16 +115,16 @@ public final class PeriodsBot extends TelegramLongPollingBot {
             resp = cmd.execute(update);
         } catch (final CmdException exception) {
             resp = Optional.empty();
-            exception.printStackTrace();
+            LOG.error("Error executing command: {}", exception.getMessage(), exception);
         }
         return resp;
     }
 
-    public void handleSend(final Send<AbsSender> send) {
+    private void handleSend(final Send<AbsSender> send) {
         try {
             send.send(this);
         } catch (final SendException exception) {
-            exception.printStackTrace();
+            LOG.error("Error sending message: {}", exception.getMessage(), exception);
         }
     }
 }

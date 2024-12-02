@@ -35,9 +35,20 @@ import java.util.function.Function;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
+/**
+ * Command remove user's period.
+ *
+ * @since 0.1.0
+ */
 public final class RemovePeriodCmd implements Cmd<Update, AbsSender> {
+    /**
+     * Transaction.
+     */
     private final Transaction<Users> transaction;
 
+    /**
+     * Convert date entered by the user to LocalDate.
+     */
     private final Function<String, LocalDate> convert;
 
     public RemovePeriodCmd(

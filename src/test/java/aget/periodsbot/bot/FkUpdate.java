@@ -28,25 +28,39 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
+/**
+ * Fake update.
+ *
+ * @since 0.1.0
+ */
 public final class FkUpdate {
+    /**
+     * Name.
+     */
     private final String username;
 
+    /**
+     * Id.
+     */
     private final Long id;
 
-    private final String message;
+    /**
+     * Message.
+     */
+    private final String text;
 
     public FkUpdate() {
         this("text");
     }
 
-    public FkUpdate(final String message) {
-        this("test", 1L, message);
+    public FkUpdate(final String text) {
+        this("test", 1L, text);
     }
 
-    public FkUpdate(final String username, final Long id, final String message) {
+    public FkUpdate(final String username, final Long id, final String text) {
         this.username = username;
         this.id = id;
-        this.message = message;
+        this.text = text;
     }
 
     public Update update() {
@@ -55,7 +69,7 @@ public final class FkUpdate {
         user.setId(this.id);
         final Message message = new Message();
         message.setFrom(user);
-        message.setText(this.message);
+        message.setText(this.text);
         final Update update = new Update();
         update.setMessage(message);
         return update;

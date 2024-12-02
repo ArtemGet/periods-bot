@@ -36,9 +36,20 @@ import java.util.Optional;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
+/**
+ * Command shows user's current period.
+ *
+ * @since 0.1.0
+ */
 public final class CurrentPeriodCmd implements Cmd<Update, AbsSender> {
+    /**
+     * Transaction.
+     */
     private final Transaction<Users> transaction;
 
+    /**
+     * Date display format.
+     */
     private final DateTimeFormatter formatter;
 
     public CurrentPeriodCmd(final Transaction<Users> transaction, final String format) {

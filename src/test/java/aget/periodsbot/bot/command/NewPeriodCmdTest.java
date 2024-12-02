@@ -34,13 +34,17 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+/**
+ * Test case for {@link NewPeriodCmd}.
+ *
+ * @since 0.1.0
+ */
 final class NewPeriodCmdTest {
     @Test
     void shouldAddNewPeriod() {
         final Update update = new FkUpdate("test", 1L, "20-12-2021").update();
         final FkTransaction transaction = new FkTransaction();
         transaction.consume(users -> users.add(1L, "test"));
-
         Assertions.assertEquals(
             new SendMsg(update, "Есть, мэм!"),
             new NewPeriodCmd(
