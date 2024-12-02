@@ -66,7 +66,10 @@ public final class BotProps {
             properties.load(inputStream);
             return properties.getProperty(name);
         } catch (final IOException exception) {
-            throw new RuntimeException(exception);
+            throw new IllegalArgumentException(
+                String.format("Can't load properties from profile %s", this.profile),
+                exception
+            );
         }
     }
 }

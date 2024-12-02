@@ -58,7 +58,10 @@ public final class PgProps {
             properties.load(inputStream);
             return properties.getProperty("postgres.connection.url");
         } catch (final IOException exception) {
-            throw new RuntimeException(exception);
+            throw new IllegalArgumentException(
+                String.format("Can't load properties from profile %s", this.profile),
+                exception
+            );
         }
     }
 }

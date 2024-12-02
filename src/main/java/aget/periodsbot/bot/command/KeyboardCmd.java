@@ -53,12 +53,11 @@ public final class KeyboardCmd implements Cmd<Update, AbsSender> {
     }
 
     public KeyboardCmd(final KeyboardRow row) {
-        this(new ReplyKeyboardMarkup(Collections.singletonList(row)));
+        this(KeyboardCmd.keyboardCtr(row));
     }
 
     public KeyboardCmd(final ReplyKeyboardMarkup keyboard) {
         this.keyboard = keyboard;
-        keyboard.setResizeKeyboard(true);
     }
 
     @Override
@@ -72,5 +71,12 @@ public final class KeyboardCmd implements Cmd<Update, AbsSender> {
                 )
             )
         );
+    }
+
+    private static ReplyKeyboardMarkup keyboardCtr(final KeyboardRow row) {
+        final ReplyKeyboardMarkup keyboard =
+            new ReplyKeyboardMarkup(Collections.singletonList(row));
+        keyboard.setResizeKeyboard(true);
+        return keyboard;
     }
 }

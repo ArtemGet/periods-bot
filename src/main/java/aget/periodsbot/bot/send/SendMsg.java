@@ -58,8 +58,8 @@ public final class SendMsg implements Send<AbsSender> {
         this(new TextTgSend(id, text));
     }
 
-    public SendMsg(final Supplier<SendMessage> tgsend) {
-        this.tgsend = tgsend;
+    public SendMsg(final Supplier<SendMessage> send) {
+        this.tgsend = send;
     }
 
     @Override

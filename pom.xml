@@ -5,23 +5,13 @@
 
     <groupId>aget</groupId>
     <artifactId>periodsbot</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.0</version>
 
     <name>periodsbot</name>
     <description>periodsbot</description>
 
     <properties>
         <java.version>17</java.version>
-        <jdbi.version>3.43.0</jdbi.version>
-        <junit.version>5.9.2</junit.version>
-        <mockito.version>5.10.0</mockito.version>
-        <telegrambots.version>6.9.7.0</telegrambots.version>
-        <logging.version>2.22.1</logging.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <lombok.version>1.18.30</lombok.version>
-        <postgres.version>42.7.1</postgres.version>
-        <testcontainers.postgres>1.19.5</testcontainers.postgres>
     </properties>
 
     <dependencies>
@@ -31,78 +21,42 @@
             <version>0.3.0</version>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jdbi</groupId>
             <artifactId>jdbi3-core</artifactId>
+            <version>3.43.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>${postgres.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots</artifactId>
-            <version>${telegrambots.version}</version>
+            <version>6.9.7.0</version>
         </dependency>
+
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${logging.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${logging.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <version>${logging.version}</version>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.1</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>${mockito.version}</version>
+            <version>5.9.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jdbi</groupId>
             <artifactId>jdbi3-testcontainers</artifactId>
+            <version>3.43.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>${testcontainers.postgres}</version>
+            <version>1.19.5</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.jdbi</groupId>
-                <artifactId>jdbi3-bom</artifactId>
-                <type>pom</type>
-                <version>${jdbi.version}</version>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <build>
         <plugins>
@@ -111,8 +65,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.5.1</version>
                 <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
             <plugin>
