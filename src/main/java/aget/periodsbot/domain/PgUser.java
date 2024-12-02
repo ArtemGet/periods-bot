@@ -41,7 +41,7 @@ public final class PgUser implements User {
     /**
      * Periods factory.
      */
-    private final PeriodsFactory periods;
+    private final PeriodsFactory prds;
 
     /**
      * User id.
@@ -54,7 +54,7 @@ public final class PgUser implements User {
         final UUID id
     ) {
         this.source = source;
-        this.periods = periods;
+        this.prds = periods;
         this.id = id;
     }
 
@@ -73,6 +73,6 @@ public final class PgUser implements User {
 
     @Override
     public Periods periods() {
-        return this.periods.periods(this.source, this.id);
+        return this.prds.periods(this.source, this.id);
     }
 }
