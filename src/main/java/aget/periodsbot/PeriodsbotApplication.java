@@ -109,7 +109,7 @@ public class PeriodsbotApplication {
                         transaction,
                         new StringToDateConvert(
                             new DateTimeFormatterBuilder()
-                                .appendPattern("dd.MM")
+                                .appendPattern(format)
                                 .parseDefaulting(ChronoField.YEAR, LocalDate.now().getYear())
                                 .toFormatter(),
                             "\\d{2}.\\d{2}"
