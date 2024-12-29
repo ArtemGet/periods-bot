@@ -24,8 +24,8 @@
 
 package aget.periodsbot.domain;
 
-import java.util.UUID;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.statement.UnableToExecuteStatementException;
 import org.jdbi.v3.testing.junit5.JdbiExtension;
 import org.jdbi.v3.testing.junit5.tc.JdbiTestcontainersExtension;
 import org.junit.jupiter.api.Assertions;
@@ -38,12 +38,12 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.MountableFile;
 
 /**
- * Test case for {@link PgUser}.
+ * Test case for {@link PgUsers}.
  *
  * @since 0.1.0
  */
 @Testcontainers
-final class PgUserTest {
+final class PgUsersTest {
     /**
      * Database container.
      */
@@ -62,39 +62,59 @@ final class PgUserTest {
      */
     @RegisterExtension
     public static final JdbiExtension EXTENSION = JdbiTestcontainersExtension
-        .instance(PgUserTest.DB_CONTAINER);
+        .instance(PgUsersTest.DB_CONTAINER);
 
     @Test
-    void shouldReturnDefaultNameWhenNameIsNotPresent(final Jdbi jdbi) {
-        Assertions.assertEquals(
-            "пользователь",
-            jdbi.inTransaction(
-                handle -> new PgUser(
-                    handle,
-                    new PgPeriodsFactory(),
-                    UUID.randomUUID()
-                ).name()
+    void shouldAddNewUser(final Jdbi jdbi) {
+        Assertions.assertDoesNotThrow(
+            () -> jdbi.useTransaction(
+                handle ->
+                    new PgUsers(
+                        handle,
+                        new PgPeriodsFactory()
+                    ).add(1L, "test")
             )
         );
     }
 
     @Test
-    void shouldReturnNameWhenNameIsPresent(final Jdbi jdbi) {
-        final Transaction<Users> transaction = new PgTransaction(jdbi);
-        transaction.consume(users -> users.add(1L, "test"));
-        Assertions.assertEquals(
-            "test",
-            transaction.callback(users -> users.user(1L).name())
+    void throwErrorWhenUserAlreadyExists(final Jdbi jdbi) {
+        Assertions.assertDoesNotThrow(
+            () -> jdbi.useTransaction(
+                handle ->
+                    new PgUsers(
+                        handle,
+                        new PgPeriodsFactory()
+                    ).add(2L, "test")
+            )
+        );
+        Assertions.assertThrows(
+            UnableToExecuteStatementException.class,
+            () -> jdbi.useTransaction(
+                handle ->
+                    new PgUsers(
+                        handle,
+                        new PgPeriodsFactory()
+                    ).add(2L, "test")
+            )
         );
     }
 
     @Test
-    void shouldReturnDefaultNameWhenUserNotHaveName(final Jdbi jdbi) {
+    void shouldReturnUserWhenUserIsPresent(final Jdbi jdbi) {
         final Transaction<Users> transaction = new PgTransaction(jdbi);
-        transaction.consume(users -> users.add(2L, null));
-        Assertions.assertEquals(
-            "пользователь",
-            transaction.callback(users -> users.user(2L).name())
+        transaction.consume(users -> users.add(3L, "test"));
+        Assertions.assertDoesNotThrow(
+            () -> transaction.callback(users -> users.user(3L))
+        );
+    }
+
+    @Test
+    void throwErrorWhenUserIsNotPresent(final Jdbi jdbi) {
+        Assertions.assertThrows(
+            IllegalStateException.class,
+            () -> new PgTransaction(jdbi)
+                .callback(users -> users.user(4L))
         );
     }
 }

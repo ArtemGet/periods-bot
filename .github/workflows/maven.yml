@@ -1,0 +1,33 @@
+name: Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+    - name: Maven setting
+      uses: s4u/maven-settings-action@v3.1.0
+      with:
+        servers: |
+          [{
+              "id": "github",
+              "url": "https://maven.pkg.github.com/ArtemGet/*",
+              "username": "${{ secrets.USER_PACKAGE_READ }}",
+              "password": "${{ secrets.TOKEN_PACKAGE_READ }}"
+          }]
+    - name: Build with Maven
+      run: mvn clean install -Pqulice --batch-mode --update-snapshots

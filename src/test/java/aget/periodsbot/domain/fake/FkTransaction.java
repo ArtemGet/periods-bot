@@ -22,15 +22,39 @@
  * SOFTWARE.
  */
 
-package aget.periodsbot.domain;
+package aget.periodsbot.domain.fake;
+
+import aget.periodsbot.domain.Transaction;
+import aget.periodsbot.domain.Users;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
- * User.
+ * Fake transaction implementation.
  *
  * @since 0.1.0
  */
-public interface User {
-    String name();
+public final class FkTransaction implements Transaction<Users> {
+    /**
+     * Users.
+     */
+    private final Users users;
 
-    Periods periods();
+    public FkTransaction() {
+        this(new FkUsers());
+    }
+
+    public FkTransaction(final Users users) {
+        this.users = users;
+    }
+
+    @Override
+    public <R> R callback(final Function<Users, R> function) {
+        return function.apply(this.users);
+    }
+
+    @Override
+    public void consume(final Consumer<Users> consumer) {
+        consumer.accept(this.users);
+    }
 }

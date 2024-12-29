@@ -24,13 +24,17 @@
 
 package aget.periodsbot.domain;
 
+import java.util.UUID;
+import org.jdbi.v3.core.Handle;
+
 /**
- * User.
+ * Provides {@link Periods} for PostgreSQL.
  *
  * @since 0.1.0
  */
-public interface User {
-    String name();
-
-    Periods periods();
+public final class PgPeriodsFactory implements PeriodsFactory {
+    @Override
+    public Periods periods(final Handle handle, final UUID usid) {
+        return new PgPeriods(handle, usid);
+    }
 }

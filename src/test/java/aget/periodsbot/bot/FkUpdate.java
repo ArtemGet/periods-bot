@@ -22,15 +22,56 @@
  * SOFTWARE.
  */
 
-package aget.periodsbot.domain;
+package aget.periodsbot.bot;
+
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
 
 /**
- * User.
+ * Fake update.
  *
  * @since 0.1.0
  */
-public interface User {
-    String name();
+public final class FkUpdate {
+    /**
+     * Name.
+     */
+    private final String username;
 
-    Periods periods();
+    /**
+     * Id.
+     */
+    private final Long id;
+
+    /**
+     * Message.
+     */
+    private final String text;
+
+    public FkUpdate() {
+        this("text");
+    }
+
+    public FkUpdate(final String text) {
+        this("test", 1L, text);
+    }
+
+    public FkUpdate(final String username, final Long id, final String text) {
+        this.username = username;
+        this.id = id;
+        this.text = text;
+    }
+
+    public Update update() {
+        final User user = new User();
+        user.setUserName(this.username);
+        user.setId(this.id);
+        final Message message = new Message();
+        message.setFrom(user);
+        message.setText(this.text);
+        final Update update = new Update();
+        update.setMessage(message);
+        return update;
+    }
 }

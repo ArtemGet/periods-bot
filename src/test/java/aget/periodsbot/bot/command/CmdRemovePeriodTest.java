@@ -22,34 +22,44 @@
  * SOFTWARE.
  */
 
-package aget.periodsbot.domain;
+package aget.periodsbot.bot.command;
 
+import aget.periodsbot.bot.FkUpdate;
+import aget.periodsbot.bot.convert.StringToDateConvert;
+import aget.periodsbot.bot.send.SendMsg;
+import aget.periodsbot.domain.fake.FkPeriods;
+import aget.periodsbot.domain.fake.FkTransaction;
+import aget.periodsbot.domain.fake.FkUser;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
 /**
- * Test case for {@link EaPeriod}.
+ * Test case for {@link CmdRemovePeriod}.
  *
  * @since 0.1.0
  */
-final class EaPeriodTest {
+final class CmdRemovePeriodTest {
     @Test
-    void shouldReturnStartDate() {
-        final LocalDate current = LocalDate.now();
+    void shouldRemovePeriod() {
+        final Update update = new FkUpdate("test", 1L, "20-12-2021").update();
+        final FkTransaction transaction = new FkTransaction();
+        transaction.consume(
+            users -> {
+                users.add(1L, "test");
+                users.user(1L).periods().add(LocalDate.of(2021, 12, 20));
+            });
         Assertions.assertEquals(
-            current,
-            new EaPeriod(current).start()
+            new SendMsg(update, "Есть, мэм!"),
+            new CmdRemovePeriod(
+                transaction,
+                new StringToDateConvert("dd-MM-yyyy", "\\d{2}-\\d{2}-\\d{4}")
+            ).execute(update).orElseGet(() -> new SendMsg(update, "no"))
         );
-    }
-
-    @Test
-    void shouldReturnPeriodLength() {
         Assertions.assertEquals(
-            new EaPeriod(
-                LocalDate.now().minusDays(30)
-            ).days(),
-            31
+            new FkUser(1L, "test", new FkPeriods()),
+            transaction.callback(users -> users.user(1L))
         );
     }
 }

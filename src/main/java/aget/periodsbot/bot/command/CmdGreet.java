@@ -22,34 +22,45 @@
  * SOFTWARE.
  */
 
-package aget.periodsbot.domain;
+package aget.periodsbot.bot.command;
 
-import java.time.LocalDate;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import aget.periodsbot.bot.send.SendMsg;
+import aget.periodsbot.domain.Transaction;
+import aget.periodsbot.domain.Users;
+import com.github.artemget.teleroute.command.Cmd;
+import com.github.artemget.teleroute.send.Send;
+import java.util.Optional;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.bots.AbsSender;
 
 /**
- * Test case for {@link EaPeriod}.
+ * Command adds new user and greet him.
  *
  * @since 0.1.0
  */
-final class EaPeriodTest {
-    @Test
-    void shouldReturnStartDate() {
-        final LocalDate current = LocalDate.now();
-        Assertions.assertEquals(
-            current,
-            new EaPeriod(current).start()
-        );
+public final class CmdGreet implements Cmd<Update, AbsSender> {
+    /**
+     * Transaction.
+     */
+    private final Transaction<Users> transaction;
+
+    public CmdGreet(final Transaction<Users> transaction) {
+        this.transaction = transaction;
     }
 
-    @Test
-    void shouldReturnPeriodLength() {
-        Assertions.assertEquals(
-            new EaPeriod(
-                LocalDate.now().minusDays(30)
-            ).days(),
-            31
+    @Override
+    public Optional<Send<AbsSender>> execute(final Update update) {
+        this.transaction.consume(
+            users ->
+                users.add(
+                    update.getMessage().getFrom().getId(),
+                    update.getMessage().getFrom().getUserName()
+                )
         );
+        return Optional.of(
+            new SendMsg(
+                update,
+                String.format("Приветствую, %s!", update.getMessage().getFrom().getUserName())
+            ));
     }
 }

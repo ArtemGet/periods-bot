@@ -22,57 +22,59 @@
  * SOFTWARE.
  */
 
-package aget.periodsbot.domain;
+package aget.periodsbot.bot.send;
 
-import java.util.UUID;
-import org.jdbi.v3.core.Handle;
+import java.util.Objects;
+import java.util.function.Supplier;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 
 /**
- * {@link User} for PostgreSQL database.
+ * Provide Telegram keyboard for message.
  *
  * @since 0.1.0
  */
-public final class PgUser implements User {
+public final class StKeyboardTg implements Supplier<SendMessage> {
     /**
-     * Database connection.
+     * Message text.
      */
-    private final Handle source;
+    private final String text;
 
     /**
-     * Periods factory.
+     * Chat id.
      */
-    private final PeriodsFactory prds;
+    private final String id;
 
     /**
-     * User id.
+     * Keyboard.
      */
-    private final UUID id;
+    private final ReplyKeyboardMarkup keyboard;
 
-    public PgUser(
-        final Handle source,
-        final PeriodsFactory periods,
-        final UUID id
+    public StKeyboardTg(
+        final String id, final String text, final ReplyKeyboardMarkup keyboard
     ) {
-        this.source = source;
-        this.prds = periods;
         this.id = id;
+        this.text = text;
+        this.keyboard = keyboard;
+    }
+
+    public SendMessage get() {
+        final SendMessage send = new SendMessage(this.id, this.text);
+        send.setReplyMarkup(this.keyboard);
+        return send;
     }
 
     @Override
-    public String name() {
-        return this.source
-            .inTransaction(
-                handle ->
-                    handle.select(
-                        "SELECT name FROM public.users WHERE id = ?",
-                        this.id
-                    ).mapTo(String.class)
-            ).findFirst()
-            .orElse("пользователь");
+    public int hashCode() {
+        return Objects.hash(this.text, this.id, this.keyboard);
     }
 
     @Override
-    public Periods periods() {
-        return this.prds.periods(this.source, this.id);
+    public boolean equals(final Object object) {
+        return this == object
+            || object instanceof StKeyboardTg
+            && this.text.equals(((StKeyboardTg) object).text)
+            && this.id.equals(((StKeyboardTg) object).id)
+            && this.keyboard.equals(((StKeyboardTg) object).keyboard);
     }
 }

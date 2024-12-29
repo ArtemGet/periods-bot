@@ -22,15 +22,39 @@
  * SOFTWARE.
  */
 
-package aget.periodsbot.domain;
+package aget.periodsbot.domain.fake;
+
+import aget.periodsbot.domain.User;
+import aget.periodsbot.domain.Users;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 /**
- * User.
+ * Fake users.
  *
  * @since 0.1.0
  */
-public interface User {
-    String name();
+public final class FkUsers implements Users {
+    /**
+     * Collection of users.
+     */
+    private final Dictionary<Long, User> users;
 
-    Periods periods();
+    public FkUsers() {
+        this(new Hashtable<>());
+    }
+
+    public FkUsers(final Dictionary<Long, User> users) {
+        this.users = users;
+    }
+
+    @Override
+    public void add(final Long id, final String name) {
+        this.users.put(id, new FkUser(id, name, new FkPeriods()));
+    }
+
+    @Override
+    public User user(final Long id) {
+        return this.users.get(id);
+    }
 }

@@ -24,8 +24,10 @@
 
 package aget.periodsbot.domain;
 
+import java.time.LocalDate;
 import java.util.UUID;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.statement.UnableToExecuteStatementException;
 import org.jdbi.v3.testing.junit5.JdbiExtension;
 import org.jdbi.v3.testing.junit5.tc.JdbiTestcontainersExtension;
 import org.junit.jupiter.api.Assertions;
@@ -38,12 +40,12 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.MountableFile;
 
 /**
- * Test case for {@link PgUser}.
+ * Test case for {@link PgPeriods}.
  *
  * @since 0.1.0
  */
 @Testcontainers
-final class PgUserTest {
+final class PgPeriodsTest {
     /**
      * Database container.
      */
@@ -62,39 +64,63 @@ final class PgUserTest {
      */
     @RegisterExtension
     public static final JdbiExtension EXTENSION = JdbiTestcontainersExtension
-        .instance(PgUserTest.DB_CONTAINER);
+        .instance(PgPeriodsTest.DB_CONTAINER);
 
     @Test
-    void shouldReturnDefaultNameWhenNameIsNotPresent(final Jdbi jdbi) {
-        Assertions.assertEquals(
-            "пользователь",
-            jdbi.inTransaction(
-                handle -> new PgUser(
+    void shouldAddPeriodWhenUserIsPresent(final Jdbi jdbi) {
+        final Transaction<Users> transaction = new PgTransaction(jdbi);
+        transaction.consume(users -> users.add(1L, "test"));
+        Assertions.assertDoesNotThrow(
+            () -> transaction.callback(users -> users.user(1L))
+        );
+    }
+
+    @Test
+    void throwErrorWhenUserIsNotPresent(final Jdbi jdbi) {
+        Assertions.assertThrows(
+            UnableToExecuteStatementException.class,
+            () -> jdbi.useTransaction(
+                handle -> new PgPeriods(
                     handle,
-                    new PgPeriodsFactory(),
                     UUID.randomUUID()
-                ).name()
+                ).add(LocalDate.now())
             )
         );
     }
 
     @Test
-    void shouldReturnNameWhenNameIsPresent(final Jdbi jdbi) {
+    void shouldReturnLastPeriods(final Jdbi jdbi) {
         final Transaction<Users> transaction = new PgTransaction(jdbi);
-        transaction.consume(users -> users.add(1L, "test"));
+        final LocalDate current = LocalDate.now();
+        transaction.consume(
+            users -> {
+                users.add(2L, "test");
+                users.user(2L).periods().add(current);
+            });
         Assertions.assertEquals(
-            "test",
-            transaction.callback(users -> users.user(1L).name())
+            current,
+            transaction.callback(
+                users ->
+                    users.user(2L)
+                        .periods()
+                        .last(10)
+            ).get(0).start()
         );
     }
 
     @Test
-    void shouldReturnDefaultNameWhenUserNotHaveName(final Jdbi jdbi) {
+    void shouldRemovePeriod(final Jdbi jdbi) {
         final Transaction<Users> transaction = new PgTransaction(jdbi);
-        transaction.consume(users -> users.add(2L, null));
-        Assertions.assertEquals(
-            "пользователь",
-            transaction.callback(users -> users.user(2L).name())
+        final LocalDate current = LocalDate.now();
+        transaction.consume(
+            users -> {
+                users.add(3L, "test");
+                users.user(3L).periods().add(current);
+            });
+        Assertions.assertDoesNotThrow(
+            () -> transaction.consume(
+                users -> users.user(3L).periods().remove(current)
+            )
         );
     }
 }

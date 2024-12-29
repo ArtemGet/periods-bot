@@ -22,15 +22,47 @@
  * SOFTWARE.
  */
 
-package aget.periodsbot.domain;
+package aget.periodsbot.bot.send;
+
+import java.util.Objects;
+import java.util.function.Supplier;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 /**
- * User.
+ * Provide Telegram text message.
  *
  * @since 0.1.0
  */
-public interface User {
-    String name();
+public final class StTextTg implements Supplier<SendMessage> {
+    /**
+     * Message text.
+     */
+    private final String text;
 
-    Periods periods();
+    /**
+     * Chat id.
+     */
+    private final String id;
+
+    public StTextTg(final String text, final String id) {
+        this.text = text;
+        this.id = id;
+    }
+
+    public SendMessage get() {
+        return new SendMessage(this.text, this.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.text, this.id);
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        return this == object
+            || object instanceof StTextTg
+            && this.text.equals(((StTextTg) object).text)
+            && this.id.equals(((StTextTg) object).id);
+    }
 }

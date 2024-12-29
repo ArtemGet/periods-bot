@@ -24,13 +24,17 @@
 
 package aget.periodsbot.domain;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
+
 /**
- * User.
+ * Transaction.
  *
+ * @param <D> Data source.
  * @since 0.1.0
  */
-public interface User {
-    String name();
+public interface Transaction<D> {
+    <R> R callback(Function<D, R> function);
 
-    Periods periods();
+    void consume(Consumer<D> consumer);
 }

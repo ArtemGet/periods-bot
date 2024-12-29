@@ -24,13 +24,14 @@
 
 package aget.periodsbot.domain;
 
+import java.util.UUID;
+import org.jdbi.v3.core.Handle;
+
 /**
- * User.
+ * {@link Periods} provider.
  *
  * @since 0.1.0
  */
-public interface User {
-    String name();
-
-    Periods periods();
+public interface PeriodsFactory {
+    Periods periods(Handle handle, UUID usid);
 }

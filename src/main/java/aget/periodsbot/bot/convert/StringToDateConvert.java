@@ -22,49 +22,51 @@
  * SOFTWARE.
  */
 
-package aget.periodsbot.domain;
+package aget.periodsbot.bot.convert;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+import java.time.format.DateTimeFormatter;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- * Eager user's period.
+ * Converts string to {@link LocalDate}.
  *
  * @since 0.1.0
  */
-public final class EaPeriod implements Period {
+public final class StringToDateConvert implements Function<String, LocalDate> {
     /**
-     * Period start.
+     * Date format.
      */
-    private final LocalDate strt;
+    private final DateTimeFormatter format;
 
     /**
-     * Period end.
+     * Pattern.
      */
-    private final LocalDate end;
+    private final Pattern pattern;
 
-    public EaPeriod(final LocalDate start) {
-        this(start, LocalDate.now());
+    public StringToDateConvert(final String format, final String pattern) {
+        this(format, Pattern.compile(pattern));
     }
 
-    public EaPeriod(final LocalDate start, final Period next) {
-        this(start, next.start());
+    public StringToDateConvert(final String format, final Pattern pattern) {
+        this(DateTimeFormatter.ofPattern(format), pattern);
     }
 
-    public EaPeriod(final LocalDate start, final LocalDate end) {
-        this.strt = start;
-        this.end = end;
+    public StringToDateConvert(final DateTimeFormatter format, final String pattern) {
+        this(format, Pattern.compile(pattern));
+    }
+
+    public StringToDateConvert(final DateTimeFormatter format, final Pattern pattern) {
+        this.format = format;
+        this.pattern = pattern;
     }
 
     @Override
-    public LocalDate start() {
-        return this.strt;
-    }
-
-    @Override
-    public Integer days() {
-        return Long
-            .valueOf(Math.abs(ChronoUnit.DAYS.between(this.strt, this.end)))
-            .intValue() + 1;
+    public LocalDate apply(final String input) {
+        final Matcher matcher = this.pattern.matcher(input);
+        matcher.find();
+        return LocalDate.parse(matcher.group(), this.format);
     }
 }

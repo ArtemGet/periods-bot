@@ -28,11 +28,11 @@ import java.util.UUID;
 import org.jdbi.v3.core.Handle;
 
 /**
- * {@link User} for PostgreSQL database.
+ * {@link Users} for PostgreSQL.
  *
  * @since 0.1.0
  */
-public final class PgUser implements User {
+public final class PgUsers implements Users {
     /**
      * Database connection.
      */
@@ -41,38 +41,44 @@ public final class PgUser implements User {
     /**
      * Periods factory.
      */
-    private final PeriodsFactory prds;
+    private final PeriodsFactory periods;
 
-    /**
-     * User id.
-     */
-    private final UUID id;
-
-    public PgUser(
-        final Handle source,
-        final PeriodsFactory periods,
-        final UUID id
-    ) {
+    public PgUsers(final Handle source, final PeriodsFactory periods) {
         this.source = source;
-        this.prds = periods;
-        this.id = id;
+        this.periods = periods;
     }
 
     @Override
-    public String name() {
-        return this.source
-            .inTransaction(
-                handle ->
-                    handle.select(
-                        "SELECT name FROM public.users WHERE id = ?",
-                        this.id
-                    ).mapTo(String.class)
-            ).findFirst()
-            .orElse("пользователь");
+    public void add(final Long id, final String name) {
+        this.source.useTransaction(
+            handle ->
+                handle
+                    .createUpdate(
+                        "INSERT INTO public.users (id, t_id, name) VALUES (:id, :t_id, :name)"
+                    )
+                    .bind("id", UUID.randomUUID())
+                    .bind("t_id", id)
+                    .bind("name", name)
+                    .execute()
+        );
     }
 
     @Override
-    public Periods periods() {
-        return this.prds.periods(this.source, this.id);
+    public User user(final Long id) {
+        return this.source.registerRowMapper(
+            PgUser.class,
+            (rs, ctx) ->
+                new PgUser(
+                    this.source,
+                    this.periods,
+                    UUID.fromString(rs.getString("id"))
+                )
+        ).inTransaction(
+            handle ->
+                handle.select(
+                    "SELECT id,name FROM public.users WHERE t_id = ?",
+                    id
+                ).mapTo(PgUser.class)
+        ).first();
     }
 }

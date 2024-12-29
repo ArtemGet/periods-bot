@@ -22,15 +22,34 @@
  * SOFTWARE.
  */
 
-package aget.periodsbot.domain;
+package aget.periodsbot.convert;
+
+import aget.periodsbot.bot.convert.StringToDateConvert;
+import java.time.LocalDate;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
- * User.
+ * Test case for {@link StringToDateConvert}.
  *
  * @since 0.1.0
  */
-public interface User {
-    String name();
+final class StringToDateConvertTest {
+    @Test
+    void shouldProvideDate() {
+        Assertions.assertEquals(
+            LocalDate.of(2020, 6, 3),
+            new StringToDateConvert("dd-MM-yyyy", "\\d{2}-\\d{2}-\\d{4}")
+                .apply("Тестовая строка 03-06-2020")
+        );
+    }
 
-    Periods periods();
+    @Test
+    void throwsWhenWrongFormatProvided() {
+        Assertions.assertThrows(
+            IllegalStateException.class,
+            () -> new StringToDateConvert("dd-MM-yyyy", "\\d{2}-\\d{2}-\\d{4}")
+                .apply("Тестовая строка 03-06-200")
+        );
+    }
 }
