@@ -25,12 +25,12 @@
 package aget.periodsbot;
 
 import aget.periodsbot.bot.PeriodsBot;
-import aget.periodsbot.bot.command.CurrentPeriodCmd;
-import aget.periodsbot.bot.command.GreetCmd;
-import aget.periodsbot.bot.command.KeyboardCmd;
-import aget.periodsbot.bot.command.NewPeriodCmd;
-import aget.periodsbot.bot.command.PeriodStatisticCmd;
-import aget.periodsbot.bot.command.RemovePeriodCmd;
+import aget.periodsbot.bot.command.CmdCurrentPeriod;
+import aget.periodsbot.bot.command.CmdGreet;
+import aget.periodsbot.bot.command.CmdKeyboard;
+import aget.periodsbot.bot.command.CmdNewPeriod;
+import aget.periodsbot.bot.command.CmdPeriodStatistic;
+import aget.periodsbot.bot.command.CmdRemovePeriod;
 import aget.periodsbot.bot.convert.StringToDateConvert;
 import aget.periodsbot.config.BotProps;
 import aget.periodsbot.config.PgProps;
@@ -47,17 +47,22 @@ import java.time.temporal.ChronoField;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public class PeriodsbotApplication {
+    private static final String DATE_FORMAT = "dd.MM.yy";
+    private static final String SHORT_DATE_FORMAT = "dd.MM";
+
+    private static final String DATE_PATTERN = "\\d{2}.\\d{2}.\\d{2}";
+    private static final String SHORT_DATE_PATTERN = "\\d{2}.\\d{2}";
+
     public static void main(final String[] args) throws TelegramApiException {
         final Transaction<Users> transaction = new PgTransaction(new PgProps().connectionUrl());
-        final String format = "dd.MM";
         new PeriodsBot(
             new BotProps(),
             new RouteDfs<>(
                 new RouteFork<>(
                     new MatchRegex<>("/start"),
                     new CmdBatch<>(
-                        new GreetCmd(transaction),
-                        new KeyboardCmd(
+                        new CmdGreet(transaction),
+                        new CmdKeyboard(
                             "Началось",
                             "Статистика",
                             "Сегодня"
@@ -66,62 +71,72 @@ public class PeriodsbotApplication {
                 ),
                 new RouteFork<>(
                     new MatchRegex<>("Началось"),
-                    new NewPeriodCmd(transaction)
+                    new CmdNewPeriod(transaction)
                 ),
                 new RouteFork<>(
                     new MatchRegex<>("Статистика"),
-                    new PeriodStatisticCmd(transaction, format)
+                    new CmdPeriodStatistic(transaction, SHORT_DATE_FORMAT)
                 ),
                 new RouteFork<>(
                     new MatchRegex<>("Сегодня"),
-                    new CurrentPeriodCmd(transaction, format)
+                    new CmdCurrentPeriod(transaction, SHORT_DATE_FORMAT)
                 ),
                 new RouteFork<>(
-                    new MatchRegex<>("([Дд]обавить|\\+)\\s*\\d{2}.\\d{2}.\\d{2}"),
-                    new NewPeriodCmd(
-                        transaction,
-                        new StringToDateConvert("dd.MM.yy", "\\d{2}.\\d{2}.\\d{2}")
-                    )
-                ),
-                new RouteFork<>(
-                    new MatchRegex<>("([Дд]обавить|\\+)\\s*\\d{2}.\\d{2}"),
-                    new NewPeriodCmd(
-                        transaction,
-                        new StringToDateConvert(
-                            new DateTimeFormatterBuilder()
-                                .appendPattern(format)
-                                .parseDefaulting(ChronoField.YEAR, LocalDate.now().getYear())
-                                .toFormatter(),
-                            "\\d{2}.\\d{2}"
+                    new MatchRegex<>("([Дд]обавить|\\+)\\s*"),
+                    new RouteDfs<>(
+                        new RouteFork<>(
+                            new MatchRegex<>(DATE_PATTERN),
+                            new CmdNewPeriod(
+                                transaction,
+                                new StringToDateConvert(DATE_FORMAT, DATE_PATTERN)
+                            )
+                        ),
+                        new RouteFork<>(
+                            new MatchRegex<>(SHORT_DATE_PATTERN),
+                            new CmdNewPeriod(
+                                transaction,
+                                new StringToDateConvert(
+                                    new DateTimeFormatterBuilder()
+                                        .appendPattern(SHORT_DATE_FORMAT)
+                                        .parseDefaulting(ChronoField.YEAR, LocalDate.now().getYear())
+                                        .toFormatter(),
+                                    SHORT_DATE_PATTERN
+                                )
+                            )
                         )
                     )
                 ),
                 new RouteFork<>(
-                    new MatchRegex<>("([Уу]далить|\\-)\\s*\\d{2}.\\d{2}.\\d{2}"),
-                    new RemovePeriodCmd(
-                        transaction,
-                        new StringToDateConvert("dd.MM.yy", "\\d{2}.\\d{2}.\\d{2}")
-                    )
-                ),
-                new RouteFork<>(
-                    new MatchRegex<>("([Уу]далить|\\-)\\s*\\d{2}.\\d{2}"),
-                    new RemovePeriodCmd(
-                        transaction,
-                        new StringToDateConvert(
-                            new DateTimeFormatterBuilder()
-                                .appendPattern(format)
-                                .parseDefaulting(ChronoField.YEAR, LocalDate.now().getYear())
-                                .toFormatter(),
-                            "\\d{2}.\\d{2}"
+                    new MatchRegex<>("([Уу]далить|\\-)\\s*"),
+                    new RouteDfs<>(
+                        new RouteFork<>(
+                            new MatchRegex<>(DATE_PATTERN),
+                            new CmdRemovePeriod(
+                                transaction,
+                                new StringToDateConvert(DATE_FORMAT, DATE_PATTERN)
+                            )
+                        ),
+                        new RouteFork<>(
+                            new MatchRegex<>(SHORT_DATE_PATTERN),
+                            new CmdRemovePeriod(
+                                transaction,
+                                new StringToDateConvert(
+                                    new DateTimeFormatterBuilder()
+                                        .appendPattern(SHORT_DATE_FORMAT)
+                                        .parseDefaulting(ChronoField.YEAR, LocalDate.now().getYear())
+                                        .toFormatter(),
+                                    SHORT_DATE_PATTERN
+                                )
+                            )
                         )
                     )
                 ),
                 new RouteFork<>(
                     new MatchRegex<>("[Сс]татистика|[Сс]таты \\d+"),
-                    new PeriodStatisticCmd(
+                    new CmdPeriodStatistic(
                         transaction,
                         s -> Integer.parseInt(s.replaceAll("\\D", "")),
-                        format
+                        SHORT_DATE_FORMAT
                     )
                 )
             )

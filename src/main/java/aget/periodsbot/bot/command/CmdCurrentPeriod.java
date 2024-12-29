@@ -25,6 +25,7 @@
 package aget.periodsbot.bot.command;
 
 import aget.periodsbot.bot.send.SendMsg;
+import aget.periodsbot.domain.Period;
 import aget.periodsbot.domain.Periods;
 import aget.periodsbot.domain.Transaction;
 import aget.periodsbot.domain.Users;
@@ -32,62 +33,34 @@ import com.github.artemget.teleroute.command.Cmd;
 import com.github.artemget.teleroute.send.Send;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
 /**
- * Command show user's last periods.
+ * Command shows user's current period.
  *
  * @since 0.1.0
  */
-public final class PeriodStatisticCmd implements Cmd<Update, AbsSender> {
+public final class CmdCurrentPeriod implements Cmd<Update, AbsSender> {
     /**
      * Transaction.
      */
     private final Transaction<Users> transaction;
 
     /**
-     * Convert count entered by user to integer.
-     */
-    private final Function<String, Integer> count;
-
-    /**
      * Date display format.
      */
     private final DateTimeFormatter formatter;
 
-    public PeriodStatisticCmd(
-        final Transaction<Users> transaction,
-        final String format
-    ) {
-        this(transaction, 5, format);
+    public CmdCurrentPeriod(final Transaction<Users> transaction, final String format) {
+        this(transaction, DateTimeFormatter.ofPattern(format));
     }
 
-    public PeriodStatisticCmd(
+    public CmdCurrentPeriod(
         final Transaction<Users> transaction,
-        final Integer count,
-        final String format
-    ) {
-        this(transaction, s -> count, DateTimeFormatter.ofPattern(format));
-    }
-
-    public PeriodStatisticCmd(
-        final Transaction<Users> transaction,
-        final Function<String, Integer> count,
-        final String format
-    ) {
-        this(transaction, count, DateTimeFormatter.ofPattern(format));
-    }
-
-    public PeriodStatisticCmd(
-        final Transaction<Users> transaction,
-        final Function<String, Integer> count,
         final DateTimeFormatter formatter
     ) {
         this.transaction = transaction;
-        this.count = count;
         this.formatter = formatter;
     }
 
@@ -97,18 +70,18 @@ public final class PeriodStatisticCmd implements Cmd<Update, AbsSender> {
             new SendMsg(
                 update,
                 this.transaction.callback(
-                    users ->
-                        new Periods.SmartPeriods(
+                    users -> {
+                        final Periods.SmartPeriods periods = new Periods.SmartPeriods(
                             users.user(update.getMessage().getFrom().getId()).periods()
-                        ).last(this.count.apply(update.getMessage().getText()))
-                            .stream()
-                            .map(
-                                p -> String.format(
-                                    "%s - %s",
-                                    p.start().format(this.formatter),
-                                    p.days().toString()
-                                ))
-                            .collect(Collectors.joining("\n"))
+                        );
+                        final Period current = periods.current();
+                        return String.format(
+                            "Началось: %s\nДень: %s\nОсталось: %s",
+                            current.start().format(this.formatter),
+                            current.days().toString(),
+                            periods.avgLength(10) - current.days()
+                        );
+                    }
                 )
             )
         );

@@ -24,59 +24,52 @@
 
 package aget.periodsbot.bot.command;
 
-import aget.periodsbot.bot.send.KeyboardTgSend;
 import aget.periodsbot.bot.send.SendMsg;
+import aget.periodsbot.domain.Transaction;
+import aget.periodsbot.domain.Users;
 import com.github.artemget.teleroute.command.Cmd;
 import com.github.artemget.teleroute.send.Send;
-import java.util.Arrays;
-import java.util.Collections;
+import java.time.LocalDate;
 import java.util.Optional;
+import java.util.function.Function;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
 /**
- * Command to display keyboard.
+ * Command remove user's period.
  *
  * @since 0.1.0
  */
-public final class KeyboardCmd implements Cmd<Update, AbsSender> {
+public final class CmdRemovePeriod implements Cmd<Update, AbsSender> {
     /**
-     * Keyboard markup.
+     * Transaction.
      */
-    private final ReplyKeyboardMarkup keyboard;
+    private final Transaction<Users> transaction;
 
-    public KeyboardCmd(final String... buttons) {
-        this(new KeyboardRow(Arrays.stream(buttons).map(KeyboardButton::new).toList()));
-    }
+    /**
+     * Convert date entered by the user to LocalDate.
+     */
+    private final Function<String, LocalDate> convert;
 
-    public KeyboardCmd(final KeyboardRow row) {
-        this(KeyboardCmd.keyboardCtr(row));
-    }
-
-    public KeyboardCmd(final ReplyKeyboardMarkup keyboard) {
-        this.keyboard = keyboard;
+    public CmdRemovePeriod(
+        final Transaction<Users> transaction,
+        final Function<String, LocalDate> convert
+    ) {
+        this.transaction = transaction;
+        this.convert = convert;
     }
 
     @Override
     public Optional<Send<AbsSender>> execute(final Update update) {
-        return Optional.of(
-            new SendMsg(
-                new KeyboardTgSend(
-                    update.getMessage().getFrom().getId().toString(),
-                    "Выберите действие на клавиатуре",
-                    this.keyboard
-                )
-            )
+        this.transaction.consume(
+            users ->
+                users.user(update.getMessage().getFrom().getId())
+                    .periods()
+                    .remove(
+                        this.convert.apply(
+                            update.getMessage().getText()
+                        ))
         );
-    }
-
-    private static ReplyKeyboardMarkup keyboardCtr(final KeyboardRow row) {
-        final ReplyKeyboardMarkup keyboard =
-            new ReplyKeyboardMarkup(Collections.singletonList(row));
-        keyboard.setResizeKeyboard(true);
-        return keyboard;
+        return Optional.of(new SendMsg(update, "Есть, мэм!"));
     }
 }

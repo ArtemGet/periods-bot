@@ -25,6 +25,7 @@
 package aget.periodsbot.bot.send;
 
 import com.github.artemget.teleroute.send.Send;
+import com.github.artemget.teleroute.send.SendException;
 import java.util.Objects;
 import java.util.function.Supplier;
 import org.slf4j.Logger;
@@ -51,11 +52,11 @@ public final class SendMsg implements Send<AbsSender> {
     private final Supplier<SendMessage> tgsend;
 
     public SendMsg(final Update update, final String text) {
-        this(new TextTgSend(update.getMessage().getFrom().getId().toString(), text));
+        this(new StTextTg(update.getMessage().getFrom().getId().toString(), text));
     }
 
     public SendMsg(final String id, final String text) {
-        this(new TextTgSend(id, text));
+        this(new StTextTg(id, text));
     }
 
     public SendMsg(final Supplier<SendMessage> send) {
@@ -63,13 +64,12 @@ public final class SendMsg implements Send<AbsSender> {
     }
 
     @Override
-    public void send(final AbsSender send) {
+    public void send(final AbsSender send) throws SendException {
         try {
             send.execute(this.tgsend.get());
         } catch (final TelegramApiException exception) {
-            LOG.error(
-                "Error sending message to chat: {}",
-                this.tgsend.get().getChatId(),
+            throw new SendException(
+                String.format("Error sending message to chat: %s",this.tgsend.get().getChatId()),
                 exception
             );
         }

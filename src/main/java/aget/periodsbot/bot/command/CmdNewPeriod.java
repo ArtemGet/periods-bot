@@ -25,65 +25,55 @@
 package aget.periodsbot.bot.command;
 
 import aget.periodsbot.bot.send.SendMsg;
-import aget.periodsbot.domain.Period;
-import aget.periodsbot.domain.Periods;
 import aget.periodsbot.domain.Transaction;
 import aget.periodsbot.domain.Users;
 import com.github.artemget.teleroute.command.Cmd;
 import com.github.artemget.teleroute.send.Send;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 import java.util.Optional;
+import java.util.function.Function;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
 /**
- * Command shows user's current period.
+ * Command adds new period for user.
  *
  * @since 0.1.0
  */
-public final class CurrentPeriodCmd implements Cmd<Update, AbsSender> {
+public final class CmdNewPeriod implements Cmd<Update, AbsSender> {
     /**
      * Transaction.
      */
     private final Transaction<Users> transaction;
 
     /**
-     * Date display format.
+     * Convert date entered by the user to LocalDate.
      */
-    private final DateTimeFormatter formatter;
+    private final Function<String, LocalDate> convert;
 
-    public CurrentPeriodCmd(final Transaction<Users> transaction, final String format) {
-        this(transaction, DateTimeFormatter.ofPattern(format));
+    public CmdNewPeriod(final Transaction<Users> transaction) {
+        this(transaction, s -> LocalDate.now());
     }
 
-    public CurrentPeriodCmd(
+    public CmdNewPeriod(
         final Transaction<Users> transaction,
-        final DateTimeFormatter formatter
+        final Function<String, LocalDate> convert
     ) {
         this.transaction = transaction;
-        this.formatter = formatter;
+        this.convert = convert;
     }
 
     @Override
     public Optional<Send<AbsSender>> execute(final Update update) {
-        return Optional.of(
-            new SendMsg(
-                update,
-                this.transaction.callback(
-                    users -> {
-                        final Periods.SmartPeriods periods = new Periods.SmartPeriods(
-                            users.user(update.getMessage().getFrom().getId()).periods()
-                        );
-                        final Period current = periods.current();
-                        return String.format(
-                            "Началось: %s\nДень: %s\nОсталось: %s",
-                            current.start().format(this.formatter),
-                            current.days().toString(),
-                            periods.avgLength(10) - current.days()
-                        );
-                    }
-                )
-            )
+        this.transaction.consume(
+            users ->
+                users.user(update.getMessage().getFrom().getId())
+                    .periods()
+                    .add(
+                        this.convert.apply(
+                            update.getMessage().getText()
+                        ))
         );
+        return Optional.of(new SendMsg(update, "Есть, мэм!"));
     }
 }

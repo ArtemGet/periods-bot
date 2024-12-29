@@ -34,11 +34,11 @@ import org.junit.jupiter.api.Test;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 /**
- * Test case for {@link CurrentPeriodCmd}.
+ * Test case for {@link CmdCurrentPeriod}.
  *
  * @since 0.1.0
  */
-final class CurrentPeriodCmdTest {
+final class CmdCurrentPeriodTest {
     @Test
     void shouldReturnCurrentPeriod() {
         final Update update = new FkUpdate().update();
@@ -62,7 +62,7 @@ final class CurrentPeriodCmdTest {
                     25
                 )
             ),
-            new CurrentPeriodCmd(
+            new CmdCurrentPeriod(
                 transaction,
                 format
             ).execute(update).orElseGet(() -> new SendMsg(update, "no"))

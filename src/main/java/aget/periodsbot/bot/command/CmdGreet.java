@@ -29,51 +29,38 @@ import aget.periodsbot.domain.Transaction;
 import aget.periodsbot.domain.Users;
 import com.github.artemget.teleroute.command.Cmd;
 import com.github.artemget.teleroute.send.Send;
-import java.time.LocalDate;
 import java.util.Optional;
-import java.util.function.Function;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 
 /**
- * Command adds new period for user.
+ * Command adds new user and greet him.
  *
  * @since 0.1.0
  */
-public final class NewPeriodCmd implements Cmd<Update, AbsSender> {
+public final class CmdGreet implements Cmd<Update, AbsSender> {
     /**
      * Transaction.
      */
     private final Transaction<Users> transaction;
 
-    /**
-     * Convert date entered by the user to LocalDate.
-     */
-    private final Function<String, LocalDate> convert;
-
-    public NewPeriodCmd(final Transaction<Users> transaction) {
-        this(transaction, s -> LocalDate.now());
-    }
-
-    public NewPeriodCmd(
-        final Transaction<Users> transaction,
-        final Function<String, LocalDate> convert
-    ) {
+    public CmdGreet(final Transaction<Users> transaction) {
         this.transaction = transaction;
-        this.convert = convert;
     }
 
     @Override
     public Optional<Send<AbsSender>> execute(final Update update) {
         this.transaction.consume(
             users ->
-                users.user(update.getMessage().getFrom().getId())
-                    .periods()
-                    .add(
-                        this.convert.apply(
-                            update.getMessage().getText()
-                        ))
+                users.add(
+                    update.getMessage().getFrom().getId(),
+                    update.getMessage().getFrom().getUserName()
+                )
         );
-        return Optional.of(new SendMsg(update, "Есть, мэм!"));
+        return Optional.of(
+            new SendMsg(
+                update,
+                String.format("Приветствую, %s!", update.getMessage().getFrom().getUserName())
+            ));
     }
 }

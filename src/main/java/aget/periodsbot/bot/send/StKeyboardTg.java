@@ -34,7 +34,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
  *
  * @since 0.1.0
  */
-public final class KeyboardTgSend implements Supplier<SendMessage> {
+public final class StKeyboardTg implements Supplier<SendMessage> {
     /**
      * Message text.
      */
@@ -50,7 +50,7 @@ public final class KeyboardTgSend implements Supplier<SendMessage> {
      */
     private final ReplyKeyboardMarkup keyboard;
 
-    public KeyboardTgSend(
+    public StKeyboardTg(
         final String id, final String text, final ReplyKeyboardMarkup keyboard
     ) {
         this.id = id;
@@ -72,9 +72,9 @@ public final class KeyboardTgSend implements Supplier<SendMessage> {
     @Override
     public boolean equals(final Object object) {
         return this == object
-            || object instanceof KeyboardTgSend
-            && this.text.equals(((KeyboardTgSend) object).text)
-            && this.id.equals(((KeyboardTgSend) object).id)
-            && this.keyboard.equals(((KeyboardTgSend) object).keyboard);
+            || object instanceof StKeyboardTg
+            && this.text.equals(((StKeyboardTg) object).text)
+            && this.id.equals(((StKeyboardTg) object).id)
+            && this.keyboard.equals(((StKeyboardTg) object).keyboard);
     }
 }

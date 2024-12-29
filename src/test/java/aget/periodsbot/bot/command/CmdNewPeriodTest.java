@@ -25,46 +25,36 @@
 package aget.periodsbot.bot.command;
 
 import aget.periodsbot.bot.FkUpdate;
+import aget.periodsbot.bot.convert.StringToDateConvert;
 import aget.periodsbot.bot.send.SendMsg;
+import aget.periodsbot.domain.fake.FkPeriods;
 import aget.periodsbot.domain.fake.FkTransaction;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 /**
- * Test case for {@link PeriodStatisticCmd}.
+ * Test case for {@link CmdNewPeriod}.
  *
  * @since 0.1.0
  */
-final class PeriodStatisticCmdTest {
+final class CmdNewPeriodTest {
     @Test
-    void shouldShowPeriodsStatistic() {
-        final Update update = new FkUpdate().update();
-        final LocalDate last = LocalDate.of(2021, 12, 20);
+    void shouldAddNewPeriod() {
+        final Update update = new FkUpdate("test", 1L, "20-12-2021").update();
         final FkTransaction transaction = new FkTransaction();
-        transaction.consume(
-            users -> {
-                users.add(1L, "test");
-                users.user(1L).periods().add(last);
-                users.user(1L).periods().add(last.minusDays(5));
-                users.user(1L).periods().add(last.minusDays(10));
-                users.user(1L).periods().add(last.minusDays(15));
-            });
+        transaction.consume(users -> users.add(1L, "test"));
         Assertions.assertEquals(
-            new SendMsg(
-                update,
-                String.format(
-                    "20.12.2021 - %s\n15.12.2021 - 6\n10.12.2021 - 6",
-                    ChronoUnit.DAYS.between(last, LocalDate.now()) + 1
-                )
-            ),
-            new PeriodStatisticCmd(
+            new SendMsg(update, "Есть, мэм!"),
+            new CmdNewPeriod(
                 transaction,
-                3,
-                "dd.MM.yyyy"
+                new StringToDateConvert("dd-MM-yyyy", "\\d{2}-\\d{2}-\\d{4}")
             ).execute(update).orElseGet(() -> new SendMsg(update, "no"))
+        );
+        Assertions.assertEquals(
+            new FkPeriods(LocalDate.of(2021, 12, 20)),
+            transaction.callback(users -> users.user(1L).periods())
         );
     }
 }
