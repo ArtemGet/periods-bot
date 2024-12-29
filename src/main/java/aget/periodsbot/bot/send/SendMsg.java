@@ -28,8 +28,6 @@ import com.github.artemget.teleroute.send.Send;
 import com.github.artemget.teleroute.send.SendException;
 import java.util.Objects;
 import java.util.function.Supplier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.bots.AbsSender;
@@ -41,11 +39,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  * @since 0.1.0
  */
 public final class SendMsg implements Send<AbsSender> {
-    /**
-     * Logger.
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(SendMsg.class);
-
     /**
      * Telegram message provider.
      */
@@ -69,7 +62,7 @@ public final class SendMsg implements Send<AbsSender> {
             send.execute(this.tgsend.get());
         } catch (final TelegramApiException exception) {
             throw new SendException(
-                String.format("Error sending message to chat: %s",this.tgsend.get().getChatId()),
+                String.format("Error sending message to chat: %s", this.tgsend.get().getChatId()),
                 exception
             );
         }

@@ -24,13 +24,13 @@
 
 package aget.periodsbot.bot;
 
-import aget.periodsbot.bot.update.TgBotWrap;
 import aget.periodsbot.config.BotProps;
 import com.github.artemget.teleroute.command.Cmd;
 import com.github.artemget.teleroute.command.CmdException;
 import com.github.artemget.teleroute.route.Route;
 import com.github.artemget.teleroute.send.Send;
 import com.github.artemget.teleroute.send.SendException;
+import com.github.artemget.teleroute.telegrambots.update.TgBotWrap;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

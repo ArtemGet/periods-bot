@@ -21,6 +21,11 @@
             <version>0.3.0</version>
         </dependency>
         <dependency>
+            <groupId>com.github.ArtemGet</groupId>
+            <artifactId>teleroute.telegrambots</artifactId>
+            <version>0.2.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.jdbi</groupId>
             <artifactId>jdbi3-core</artifactId>
             <version>3.43.0</version>

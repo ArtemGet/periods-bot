@@ -24,8 +24,8 @@
 
 package aget.periodsbot.bot.command;
 
-import aget.periodsbot.bot.send.StKeyboardTg;
 import aget.periodsbot.bot.send.SendMsg;
+import aget.periodsbot.bot.send.StKeyboardTg;
 import com.github.artemget.teleroute.command.Cmd;
 import com.github.artemget.teleroute.send.Send;
 import java.util.Arrays;
