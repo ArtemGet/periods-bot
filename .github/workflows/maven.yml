@@ -2,9 +2,11 @@ name: Build
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
@@ -19,15 +21,5 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-    - name: Maven setting
-      uses: s4u/maven-settings-action@v3.1.0
-      with:
-        servers: |
-          [{
-              "id": "github",
-              "url": "https://maven.pkg.github.com/ArtemGet/*",
-              "username": "${{ secrets.USER_PACKAGE_READ }}",
-              "password": "${{ secrets.TOKEN_PACKAGE_READ }}"
-          }]
     - name: Build with Maven
-      run: mvn clean install -Pqulice --batch-mode --update-snapshots
+      run: mvn clean install --batch-mode --update-snapshots

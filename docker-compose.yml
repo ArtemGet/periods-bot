@@ -1,0 +1,21 @@
+services:
+  periods-database:
+    image: postgres:13
+    container_name: db
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: periods
+
+  periods-bot:
+    container_name: app
+    build: .
+    env_file: .env
+    depends_on:
+      - periods-database
+    environment:
+      postgres_connection_url: jdbc:postgresql://db:5432/periods?user=username&password=password
+      bot_name: ${BOT_NAME}
+      bot_secret: ${BOT_SECRET}
+    ports:
+      - "8080:8080"

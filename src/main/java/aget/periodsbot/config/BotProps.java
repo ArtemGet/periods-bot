@@ -24,10 +24,6 @@
 
 package aget.periodsbot.config;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 /**
  * Properties for bot.
  *
@@ -35,41 +31,29 @@ import java.util.Properties;
  */
 public final class BotProps {
     /**
-     * Profile.
+     * Name.
      */
-    private final String profile;
+    private final String name;
+
+    /**
+     * Secret.
+     */
+    private final String secret;
 
     public BotProps() {
-        this(System.getenv("profile"));
+        this(System.getenv("bot_name"), System.getenv("bot_secret"));
     }
 
-    public BotProps(final String profile) {
-        this.profile = profile;
+    public BotProps(final String name, final String secret) {
+        this.name = name;
+        this.secret = secret;
     }
 
     public String botName() {
-        return this.property("bot.name");
+        return this.name;
     }
 
     public String botToken() {
-        return this.property("bot.secret");
-    }
-
-    private String property(final String name) {
-        try (
-            InputStream inputStream =
-                Thread.currentThread()
-                    .getContextClassLoader()
-                    .getResourceAsStream(this.profile)
-        ) {
-            final Properties properties = new Properties();
-            properties.load(inputStream);
-            return properties.getProperty(name);
-        } catch (final IOException exception) {
-            throw new IllegalArgumentException(
-                String.format("Can't load properties from profile %s", this.profile),
-                exception
-            );
-        }
+        return this.secret;
     }
 }

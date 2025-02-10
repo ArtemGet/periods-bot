@@ -24,10 +24,6 @@
 
 package aget.periodsbot.config;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 /**
  * Properties for database connection.
  *
@@ -35,33 +31,19 @@ import java.util.Properties;
  */
 public final class PgProps {
     /**
-     * Profile.
+     * Connection URL.
      */
-    private final String profile;
+    private final String url;
 
     public PgProps() {
-        this(System.getenv("profile"));
+        this(System.getenv("postgres_connection_url"));
     }
 
-    public PgProps(final String profile) {
-        this.profile = profile;
+    public PgProps(final String url) {
+        this.url = url;
     }
 
     public String connectionUrl() {
-        try (
-            InputStream inputStream =
-                Thread.currentThread()
-                    .getContextClassLoader()
-                    .getResourceAsStream(this.profile)
-        ) {
-            final Properties properties = new Properties();
-            properties.load(inputStream);
-            return properties.getProperty("postgres.connection.url");
-        } catch (final IOException exception) {
-            throw new IllegalArgumentException(
-                String.format("Can't load properties from profile %s", this.profile),
-                exception
-            );
-        }
+        return this.url;
     }
 }

@@ -5,7 +5,7 @@
 
     <groupId>aget</groupId>
     <artifactId>periodsbot</artifactId>
-    <version>0.1.0</version>
+    <version>1.0-SNAPSHOT</version>
 
     <name>periodsbot</name>
     <description>periodsbot</description>
@@ -14,11 +14,18 @@
         <java.version>17</java.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>com.github.ArtemGet</groupId>
             <artifactId>teleroute</artifactId>
-            <version>0.3.0</version>
+            <version>0.4.0</version>
         </dependency>
         <dependency>
             <groupId>com.github.ArtemGet</groupId>
@@ -54,6 +61,11 @@
             <artifactId>postgresql</artifactId>
             <version>42.7.2</version>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>4.31.0</version>
         </dependency>
 
         <dependency>
@@ -118,6 +130,41 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.7.1</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <finalName>app</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <archive>
+                        <manifest>
+                            <mainClass>aget.periodsbot.PeriodsbotApplication</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.2</version>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.0</version>
@@ -131,6 +178,7 @@
                     <excludes>
                         <exclude>checkstyle:/src/main/java/aget/periodsbot/PeriodsbotApplication.java</exclude>
                         <exclude>pmd:/src/main/java/aget/periodsbot/PeriodsbotApplication.java</exclude>
+                        <exclude>duplicatefinder:.*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -140,7 +188,6 @@
                         </goals>
                     </execution>
                 </executions>
-
             </plugin>
         </plugins>
     </build>

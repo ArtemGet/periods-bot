@@ -33,6 +33,7 @@ import aget.periodsbot.bot.command.CmdPeriodStatistic;
 import aget.periodsbot.bot.command.CmdRemovePeriod;
 import aget.periodsbot.bot.convert.StringToDateConvert;
 import aget.periodsbot.config.BotProps;
+import aget.periodsbot.config.LiquibaseConf;
 import aget.periodsbot.config.PgProps;
 import aget.periodsbot.domain.PgTransaction;
 import aget.periodsbot.domain.Transaction;
@@ -54,6 +55,7 @@ public class PeriodsbotApplication {
     private static final String SHORT_DATE_PATTERN = "\\d{2}.\\d{2}";
 
     public static void main(final String[] args) throws TelegramApiException {
+        new LiquibaseConf("db-changelog-master.yml").migrate(new PgProps().connectionUrl());
         final Transaction<Users> transaction = new PgTransaction(new PgProps().connectionUrl());
         new PeriodsBot(
             new BotProps(),

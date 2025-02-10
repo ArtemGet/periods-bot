@@ -1,3 +1,6 @@
+--liquibase formatted sql
+
+--changeset VaryaGet:1
 CREATE TABLE public.users
 (
     id   uuid primary key,
