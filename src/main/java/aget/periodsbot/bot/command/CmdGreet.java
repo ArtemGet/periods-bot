@@ -51,14 +51,11 @@ public final class CmdGreet implements Cmd<Update, AbsSender> {
     @Override
     public Optional<Send<AbsSender>> execute(final Update update) {
         this.transaction.consume(
-            users -> {
-                if (users.user(update.getMessage().getFrom().getId()) == null) {
-                    users.add(
-                        update.getMessage().getFrom().getId(),
-                        update.getMessage().getFrom().getUserName()
-                    );
-                }
-            }
+            users ->
+                users.add(
+                    update.getMessage().getFrom().getId(),
+                    update.getMessage().getFrom().getUserName()
+                )
         );
         return Optional.of(
             new SendMsg(
