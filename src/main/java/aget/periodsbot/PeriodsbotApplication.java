@@ -84,17 +84,17 @@ public class PeriodsbotApplication {
                     new CmdCurrentPeriod(transaction, SHORT_DATE_FORMAT)
                 ),
                 new RouteFork<>(
-                    new MatchRegex<>("([Дд]обавить|\\+)\\s*"),
+                    new MatchRegex<>("([Дд]обавить|\\+).*"),
                     new RouteDfs<>(
                         new RouteFork<>(
-                            new MatchRegex<>(DATE_PATTERN),
+                            new MatchRegex<>(".*" + DATE_PATTERN),
                             new CmdNewPeriod(
                                 transaction,
                                 new StringToDateConvert(DATE_FORMAT, DATE_PATTERN)
                             )
                         ),
                         new RouteFork<>(
-                            new MatchRegex<>(SHORT_DATE_PATTERN),
+                            new MatchRegex<>(".*" + SHORT_DATE_PATTERN),
                             new CmdNewPeriod(
                                 transaction,
                                 new StringToDateConvert(
@@ -109,17 +109,17 @@ public class PeriodsbotApplication {
                     )
                 ),
                 new RouteFork<>(
-                    new MatchRegex<>("([Уу]далить|\\-)\\s*"),
+                    new MatchRegex<>("([Уу]далить|\\-).*"),
                     new RouteDfs<>(
                         new RouteFork<>(
-                            new MatchRegex<>(DATE_PATTERN),
+                            new MatchRegex<>(".*" + DATE_PATTERN),
                             new CmdRemovePeriod(
                                 transaction,
                                 new StringToDateConvert(DATE_FORMAT, DATE_PATTERN)
                             )
                         ),
                         new RouteFork<>(
-                            new MatchRegex<>(SHORT_DATE_PATTERN),
+                            new MatchRegex<>(".*" + SHORT_DATE_PATTERN),
                             new CmdRemovePeriod(
                                 transaction,
                                 new StringToDateConvert(
