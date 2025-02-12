@@ -25,39 +25,10 @@
 package aget.periodsbot.config;
 
 /**
- * Properties for bot.
+ * Properties for application.
  *
  * @since 0.1.0
  */
-public final class BotProps {
-    /**
-     * Name.
-     */
-    private final Prop name;
-
-    /**
-     * Secret.
-     */
-    private final Prop secret;
-
-    public BotProps() {
-        this("bot_name", "bot_secret");
-    }
-
-    public BotProps(final String namekey, final String secretkey) {
-        this(new PropEnv(namekey), new PropEnv(secretkey));
-    }
-
-    public BotProps(final Prop name, final Prop secret) {
-        this.name = name;
-        this.secret = secret;
-    }
-
-    public String botName() {
-        return this.name.get();
-    }
-
-    public String botToken() {
-        return this.secret.get();
-    }
+public interface Prop {
+    String get();
 }

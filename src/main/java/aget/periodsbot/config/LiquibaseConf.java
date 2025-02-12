@@ -49,17 +49,25 @@ public final class LiquibaseConf {
         this.changelog = changelog;
     }
 
-    public void migrate(final String url) {
+    public void migrate(final Prop url) {
         try {
             new Liquibase(
                 this.changelog,
                 new ClassLoaderResourceAccessor(),
                 DatabaseFactory.getInstance()
                     .findCorrectDatabaseImplementation(
-                        new JdbcConnection(DriverManager.getConnection(url))
+                        new JdbcConnection(DriverManager.getConnection(url.get()))
                     )
             ).update(new Contexts(), new LabelExpression());
-        } catch (final SQLException | LiquibaseException exception) {
+        } catch (final SQLException exception) {
+            throw new IllegalArgumentException(
+                String.format(
+                    "Can't migrate database with url %s, database access error.",
+                    url
+                ),
+                exception
+            );
+        } catch (final LiquibaseException exception) {
             throw new IllegalArgumentException(
                 String.format(
                     "Can't migrate database with url %s and changelog file %s",

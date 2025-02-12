@@ -25,25 +25,22 @@
 package aget.periodsbot.config;
 
 /**
- * Properties for database connection.
+ * Property from environment.
  *
  * @since 0.1.0
  */
-public final class PgProps {
+public final class PropEnv implements Prop {
     /**
-     * Connection URL.
+     * Property key.
      */
-    private final String url;
+    private final String key;
 
-    public PgProps() {
-        this(System.getenv("postgres_connection_url"));
+    public PropEnv(final String key) {
+        this.key = key;
     }
 
-    public PgProps(final String url) {
-        this.url = url;
-    }
-
-    public String connectionUrl() {
-        return this.url;
+    @Override
+    public String get() {
+        return System.getenv(this.key);
     }
 }

@@ -24,6 +24,7 @@
 
 package aget.periodsbot.domain;
 
+import aget.periodsbot.config.Prop;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import org.jdbi.v3.core.Jdbi;
@@ -44,8 +45,8 @@ public final class PgTransaction implements Transaction<Users> {
      */
     private final PeriodsFactory periods;
 
-    public PgTransaction(final String url) {
-        this(Jdbi.create(url));
+    public PgTransaction(final Prop url) {
+        this(Jdbi.create(url.get()));
     }
 
     public PgTransaction(final Jdbi jdbi) {
