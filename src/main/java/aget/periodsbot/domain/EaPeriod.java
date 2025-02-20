@@ -47,10 +47,6 @@ public final class EaPeriod implements Period {
         this(start, LocalDate.now());
     }
 
-    public EaPeriod(final LocalDate start, final Period next) {
-        this(start, next.start());
-    }
-
     public EaPeriod(final LocalDate start, final LocalDate end) {
         this.strt = start;
         this.end = end;

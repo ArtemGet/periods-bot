@@ -79,7 +79,7 @@ public final class PgPeriods implements Periods {
             ).select(
                 """
                 SELECT start_date
-                , CASE WHEN end_date IS NULL THEN now() ELSE end_date END
+                , CASE WHEN end_date IS NULL THEN now() ELSE (end_date - INTERVAL '1 DAY') END AS end_date
                 FROM (
                     SELECT start_date,
                     lag(start_date) OVER(
