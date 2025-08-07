@@ -56,10 +56,11 @@ final class CmdCurrentPeriodTest {
             new SendMsg(
                 update,
                 String.format(
-                    "Началось: %s\nДень: %s\nОсталось: %s",
+                    "Началось: %s\nДень: %s\nОсталось: %s\nБудет: %s",
                     last.minusDays(5).format(DateTimeFormatter.ofPattern(format)),
                     6,
-                    25
+                    25,
+                    last.plusDays(25).format(DateTimeFormatter.ofPattern(format))
                 )
             ),
             new CmdCurrentPeriod(

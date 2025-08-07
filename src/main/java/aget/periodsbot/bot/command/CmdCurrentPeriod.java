@@ -31,6 +31,7 @@ import aget.periodsbot.domain.Transaction;
 import aget.periodsbot.domain.Users;
 import com.github.artemget.teleroute.command.Cmd;
 import com.github.artemget.teleroute.send.Send;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -75,11 +76,13 @@ public final class CmdCurrentPeriod implements Cmd<Update, AbsSender> {
                             users.user(update.getMessage().getFrom().getId()).periods()
                         );
                         final Period current = periods.current();
+                        final Integer length = periods.avgLength(10) - current.days();
                         return String.format(
-                            "Началось: %s\nДень: %s\nОсталось: %s",
+                            "Началось: %s\nДень: %s\nОсталось: %s\nБудет: %s",
                             current.start().format(this.formatter),
                             current.days().toString(),
-                            periods.avgLength(10) - current.days()
+                            length,
+                            LocalDate.now().plusDays(length).format(this.formatter)
                         );
                     }
                 )
